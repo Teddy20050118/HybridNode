@@ -1,0 +1,24 @@
+{
+  "project": {
+    "name": "OmniTrace",
+    "version": "0.1.0",
+    "description": "C/C++ Static Analysis & Graph-based Bug Prediction"
+  },
+  "parser": {
+    "libclang_path": null,
+    "compilation_args": ["-std=c++14", "-D_ALLOW_COMPILER_AND_STL_VERSION_MISMATCH", "-Wno-everything"],
+    "file_extensions": [".cpp", ".c", ".cc", ".h", ".hpp"],
+    "exclude_patterns": ["build/", "test/", "external/", "third_party/"]
+  },
+  "analysis": {
+    "god_object_threshold": 0.15,
+    "complexity_threshold": 15,
+    "coupling_threshold": 10,
+    "enable_cross_file_analysis": true
+  },
+  "output": {
+    "json_output": "./output/analysis.json",
+    "visualization_output": "./output/visualization.json",
+    "report_output": "./output/report.json"
+  }
+}

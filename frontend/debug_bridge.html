@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HybridNode Bridge Debug</title>
+    <script src="https://cdn.jsdelivr.net/npm/@qtproject/qtwebchannel@5.15.2/qwebchannel.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #0d1117;
+            color: #c9d1d9;
+        }
+        h1 {
+            color: #58a6ff;
+        }
+        .status {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+        .success { background: rgba(46, 160, 67, 0.2); border: 1px solid #2ea043; }
+        .error { background: rgba(248, 81, 73, 0.2); border: 1px solid #f85149; }
+        .warning { background: rgba(187, 128, 9, 0.2); border: 1px solid #bb800  9; }
+        button {
+            background: #238636;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #2ea043;
+        }
+        button:disabled {
+            background: #6e7681;
+            cursor: not-allowed;
+        }
+        #output {
+            background: #161b22;
+            border: 1px solid #30363d;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 6px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #58a6ff;
+            padding-left: 10px;
+        }
+        .log-error { border-left-color: #f85149; }
+        .log-success { border-left-color: #2ea043; }
+    </style>
+</head>
+<body>
+    <h1>🐍 HybridNode Bridge Debug Tool</h1>
+    
+    <div id="status" class="status warning">
+        ⏳ Initializing...
+    </div>
+
+    <h2>Bridge Connection Tests</h2>
+    <div>
+        <button id="btn-test-hello" disabled>Test: Hello from Frontend</button>
+        <button id="btn-open-dialog" disabled>Test: Open Directory Dialog</button>
+        <button id="btn-load-graph" disabled>Test: Load Existing Graph</button>
+        <button id="btn-get-stats" disabled>Test: Get Stats</button>
+    </div>
+
+    <div id="output"></div>
+
+    <script>
+        const output = document.getElementById('output');
+        const statusDiv = document.getElementById('status');
+        let bridge = null;
+
+        function log(message, type = 'info') {
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            output.appendChild(entry);
+            output.scrollTop = output.scrollHeight;
+            console.log(message);
+        }
+
+        function setStatus(message, type) {
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+        }
+
+        function enableButtons() {
+            document.querySelectorAll('button').forEach(btn => btn.disabled = false);
+        }
+
+        // 初始化 QWebChannel
+        log('🔌 Initializing QWebChannel...');
+
+        if (typeof QWebChannel === 'undefined') {
+            setStatus('❌ QWebChannel not loaded', 'error');
+            log('ERROR: QWebChannel not found. Make sure qwebchannel.js is loaded.', 'error');
+        } else if (typeof qt === 'undefined' || !qt.webChannelTransport) {
+            setStatus('❌ qt.webChannelTransport not available', 'error');
+            log('ERROR: qt.webChannelTransport not found. Are you running in PyQt6?', 'error');
+        } else {
+            new QWebChannel(qt.webChannelTransport, function(channel) {
+                if (!channel.objects.bridge) {
+                    setStatus('❌ Bridge object not found', 'error');
+                    log('ERROR: bridge object not registered in channel', 'error');
+                    return;
+                }
+
+                bridge = channel.objects.bridge;
+                setStatus('✅ Bridge connected successfully!', 'success');
+                log('✅ Bridge connected successfully!', 'success');
+                log(`Bridge object: ${JSON.stringify(Object.keys(bridge))}`, 'info');
+                
+                enableButtons();
+
+                // 连接信号
+                connectSignals();
+            });
+        }
+
+        function connectSignals() {
+            log('📡 Connecting Python signals...');
+
+            bridge.analysisProgress.connect((message, percentage) => {
+                log(`📊 Progress: ${percentage}% - ${message}`, 'info');
+            });
+
+            bridge.analysisComplete.connect((jsonData) => {
+                log('✅ Analysis complete!', 'success');
+                try {
+                    const data = JSON.parse(jsonData);
+                    log(`Graph loaded: ${data.nodes.length} nodes, ${data.links.length} links`, 'success');
+                } catch (e) {
+                    log(`Failed to parse graph data: ${e}`, 'error');
+                }
+            });
+
+            bridge.analysisError.connect((errorMessage) => {
+                log(`❌ Analysis error: ${errorMessage}`, 'error');
+            });
+
+            bridge.directorySelected.connect((path) => {
+                log(`📁 Directory selected: ${path}`, 'success');
+            });
+
+            bridge.graphDataLoaded.connect((jsonData) => {
+                log('📊 Graph data loaded', 'success');
+                try {
+                    const data = JSON.parse(jsonData);
+                    log(`Graph: ${data.nodes.length} nodes, ${data.links.length} links`, 'success');
+                    log(`Stats: ${JSON.stringify(data.stats)}`, 'info');
+                } catch (e) {
+                    log(`Failed to parse: ${e}`, 'error');
+                }
+            });
+
+            log('✅ All signals connected', 'success');
+        }
+
+        // 测试按钮事件
+        document.getElementById('btn-test-hello').addEventListener('click', () => {
+            log('🧪 Testing simple Python call...');
+            log('✅ Hello from Frontend! (sent to console)', 'success');
+        });
+
+        document.getElementById('btn-open-dialog').addEventListener('click', () => {
+            if (!bridge) return;
+            log('🔍 Opening directory dialog...');
+            bridge.open_directory_dialog();
+        });
+
+        document.getElementById('btn-load-graph').addEventListener('click', () => {
+            if (!bridge) return;
+            log('📂 Loading existing graph data...');
+            try {
+                const result = bridge.load_existing_graph('output/graph_data.pt');
+                log(`Load initiated, result: ${typeof result}`, 'info');
+            } catch (e) {
+                log(`Error: ${e}`, 'error');
+            }
+        });
+
+        document.getElementById('btn-get-stats').addEventListener('click', () => {
+            if (!bridge) return;
+            log('📊 Getting graph stats...');
+            try {
+                const statsJson = bridge.get_graph_stats();
+                const stats = JSON.parse(statsJson);
+                log(`Stats: ${JSON.stringify(stats, null, 2)}`, 'success');
+            } catch (e) {
+                log(`Error: ${e}`, 'error');
+            }
+        });
+    </script>
+</body>
+</html>
