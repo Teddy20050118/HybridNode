@@ -178,7 +178,7 @@ def main():
         print(f"\n{RED}[ERROR] Application failed to start.{RESET}")
         return 1
     
-    print(f"\n{GREEN}✅ Application closed successfully.{RESET}")
+    print(f"\n{GREEN} Application closed successfully.{RESET}")
     return 0
 
 

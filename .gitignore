@@ -7,7 +7,7 @@ __pycache__/
 env/
 venv/
 ENV/
-build/
+/build/
 develop-eggs/
 dist/
 downloads/
@@ -27,6 +27,18 @@ wheels/
 output/
 *.json
 !config.json
+!frontend/package.json
+!frontend/package-lock.json
+!frontend/src/data/*.json
+!frontend/build/**
+!examples/*.json
+
+# Node
+node_modules/
+
+# PyVerilog 生成的解析器快取
+parser.out
+parsetab.py
 
 # IDE
 .vscode/

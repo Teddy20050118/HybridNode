@@ -9,7 +9,7 @@
 /coverage
 
 # production
-/build
+# /build  ← 保留 build/ 讓 PyQt6 桌面應用可以直接載入
 
 # misc
 .DS_Store

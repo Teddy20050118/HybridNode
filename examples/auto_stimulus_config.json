@@ -1,0 +1,46 @@
+{
+    "top_module": "ATE",
+    "clock": {
+        "signal_name": "clk",
+        "period_ns": 10,
+        "initial_value": 0
+    },
+    "reset": {
+        "signal_name": "reset",
+        "active_high": true,
+        "duration_ns": 20
+    },
+    "stimulus_bindings": [
+        {
+            "input_name": "pix_data",
+            "width": 8,
+            "data_file": "pix_data_data.dat",
+            "radix": "hex",
+            "description": "8-bit 輸入訊號"
+        },
+        {
+            "input_name": "type",
+            "width": 1,
+            "data_file": "type_data.dat",
+            "radix": "bin",
+            "description": "1-bit 輸入訊號"
+        }
+    ],
+    "outputs": [
+        {
+            "name": "bin",
+            "width": 1,
+            "description": "1-bit 輸出訊號"
+        },
+        {
+            "name": "threshold",
+            "width": 8,
+            "description": "8-bit 輸出訊號"
+        }
+    ],
+    "simulation": {
+        "test_cycles": 1000,
+        "vcd_output": "ATE_sim.vcd",
+        "display_interval": 100
+    }
+}

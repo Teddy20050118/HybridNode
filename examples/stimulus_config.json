@@ -1,0 +1,51 @@
+{
+    "top_module": "ATE",
+    "clock": {
+        "signal_name": "clk",
+        "period_ns": 10,
+        "initial_value": 0
+    },
+    "reset": {
+        "signal_name": "reset",
+        "active_high": true,
+        "duration_ns": 20
+    },
+    "stimulus_bindings": [
+        {
+            "input_name": "pix_data",
+            "width": 8,
+            "data_file": "tb1.map",
+            "radix": "hex",
+            "description": "8-bit 像素資料輸入"
+        },
+        {
+            "input_name": "type",
+            "width": 1,
+            "data_file": "type_data.dat",
+            "radix": "bin",
+            "description": "類型選擇訊號"
+        }
+    ],
+    "outputs": [
+        {
+            "name": "bin",
+            "width": 1,
+            "description": "二值化輸出"
+        },
+        {
+            "name": "threshold",
+            "width": 8,
+            "description": "動態閾值輸出"
+        }
+    ],
+    "simulation": {
+        "test_cycles": 4096,
+        "vcd_output": "auto_sim.vcd",
+        "display_interval": 512
+    },
+    "comments": {
+        "purpose": "ATE 模組自動化測試設定",
+        "author": "HybridNode AutoTestbench Generator",
+        "date": "2026-03-10"
+    }
+}

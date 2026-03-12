@@ -188,7 +188,7 @@ class AnalysisWorker(QThread):
             if nx_graph.number_of_nodes() == 0:
                 msg = (
                     f"[ERROR] 專案 '{self.project_path}' 中所有檔案的解析結果均為空，"
-                    "無法建穋有效節點。"
+                    "無法建立有效節點。"
                     "請確認目錄中包含可解析的 .cpp / .h 檔案，且不依賴特殊編譯器擴充。"
                 )
                 logger.error(msg)
@@ -481,6 +481,158 @@ class HybridBridge(QObject):
             "risky_nodes": 0
         })
     
+    @pyqtSlot(str, result=str)
+    def generate_auto_tb(self, config_json_str: str) -> str:
+        """
+        接收前端傳來的測資設定 JSON，執行自動化 Testbench 生成與模擬
+        
+        工作流程：
+        1. 解析前端傳來的 JSON 設定
+        2. 儲存設定檔到 output/ui_stimulus_config.json
+        3. 呼叫 auto_tb_generator.py 生成 Verilog Testbench
+        4. 呼叫 hw_stage3_sim.py 重新執行模擬
+        5. 回傳生成結果給前端
+        
+        參數:
+            config_json_str (str): 前端組裝的完整設定 JSON 字串
+            
+        回傳:
+            str: JSON 格式的結果字串
+                成功: {"success": true, "message": "...", "testbench_path": "...", "simulation_path": "..."}
+                失敗: {"success": false, "error": "錯誤訊息"}
+        """
+        import subprocess
+        import os
+        from pathlib import Path
+        
+        try:
+            # ========== 步驟 1: 解析前端傳來的設定 ==========
+            config_data = json.loads(config_json_str)
+            top_module = config_data.get('top_module', 'unknown')
+            logger.info(f"[Bridge] [Auto-TB] 接收到測資設定，頂層模組: {top_module}")
+            
+            # ========== 步驟 2: 儲存設定檔 ==========
+            output_dir = Path('output')
+            output_dir.mkdir(exist_ok=True)
+            
+            simulation_dir = Path('simulation')
+            simulation_dir.mkdir(exist_ok=True)
+            
+            config_path = output_dir / 'ui_stimulus_config.json'
+            with open(config_path, 'w', encoding='utf-8') as f:
+                json.dump(config_data, f, indent=2, ensure_ascii=False)
+            
+            logger.info(f"[Bridge] [Auto-TB] 設定檔已儲存: {config_path}")
+            
+            # ========== 步驟 3: 呼叫 auto_tb_generator.py 生成 Testbench ==========
+            tb_output_path = simulation_dir / f"{top_module}_auto_tb.v"
+            
+            cmd_generate = [
+                'python',
+                'src/auto_tb_generator.py',
+                '-c', str(config_path),
+                '-o', str(tb_output_path)
+            ]
+            
+            logger.info(f"[Bridge] [Auto-TB] 執行命令: {' '.join(cmd_generate)}")
+            
+            result_gen = subprocess.run(
+                cmd_generate,
+                capture_output=True,
+                text=True,
+                encoding='utf-8',
+                errors='ignore',  # 避免 Windows PowerShell 編碼錯誤
+                cwd=os.getcwd()
+            )
+            
+            if result_gen.returncode != 0:
+                error_msg = f"Testbench 生成失敗 (Exit Code {result_gen.returncode}):\n{result_gen.stderr}"
+                logger.error(f"[Bridge] [Auto-TB] {error_msg}")
+                return safe_json_dumps({
+                    "success": False,
+                    "error": error_msg
+                })
+            
+            logger.info(f"[Bridge] [Auto-TB] Testbench 已生成: {tb_output_path}")
+            logger.info(f"[Bridge] [Auto-TB] 生成器輸出:\n{result_gen.stdout}")
+            
+            # ========== 步驟 4: 呼叫 hw_stage3_sim.py 重新執行模擬 ==========
+            # 假設原始 Verilog 檔案在 examples/sample.v
+            verilog_source = Path('examples') / 'sample.v'
+            
+            # 如果找不到預設檔案，嘗試從設定檔中尋找
+            if not verilog_source.exists():
+                # 可以從 config_data 中取得原始檔案路徑（如果前端有提供）
+                verilog_source = Path('examples') / f"{top_module}.v"
+            
+            simulation_output = output_dir / 'simulation_data.json'
+            
+            cmd_simulate = [
+                'python',
+                'src/hw_stage3_sim.py',
+                str(verilog_source),
+                str(tb_output_path),
+                '-o', str(simulation_output)
+            ]
+            
+            logger.info(f"[Bridge] [Auto-TB] 執行模擬命令: {' '.join(cmd_simulate)}")
+            
+            result_sim = subprocess.run(
+                cmd_simulate,
+                capture_output=True,
+                text=True,
+                encoding='utf-8',
+                errors='ignore',
+                cwd=os.getcwd()
+            )
+            
+            if result_sim.returncode != 0:
+                error_msg = f"模擬執行失敗 (Exit Code {result_sim.returncode}):\n{result_sim.stderr}"
+                logger.error(f"[Bridge] [Auto-TB] {error_msg}")
+                return safe_json_dumps({
+                    "success": False,
+                    "error": error_msg
+                })
+            
+            logger.info(f"[Bridge] [Auto-TB] 模擬已完成: {simulation_output}")
+            logger.info(f"[Bridge] [Auto-TB] 模擬器輸出:\n{result_sim.stdout}")
+            
+            # ========== 步驟 5: 回傳成功結果 ==========
+            response = {
+                "success": True,
+                "message": f"Testbench 生成與模擬成功完成！\n檔案已儲存至:\n- Testbench: {tb_output_path}\n- 模擬資料: {simulation_output}",
+                "testbench_path": str(tb_output_path),
+                "simulation_path": str(simulation_output),
+                "config_path": str(config_path)
+            }
+            
+            logger.info(f"[Bridge] [Auto-TB] 完成！回傳結果給前端")
+            return safe_json_dumps(response)
+            
+        except json.JSONDecodeError as e:
+            error_msg = f"JSON 解析錯誤: {str(e)}"
+            logger.error(f"[Bridge] [Auto-TB] {error_msg}")
+            return safe_json_dumps({
+                "success": False,
+                "error": error_msg
+            })
+            
+        except FileNotFoundError as e:
+            error_msg = f"檔案或命令未找到: {str(e)}\n請確認 Python 環境與相關腳本是否存在"
+            logger.error(f"[Bridge] [Auto-TB] {error_msg}")
+            return safe_json_dumps({
+                "success": False,
+                "error": error_msg
+            })
+            
+        except Exception as e:
+            error_msg = f"執行錯誤: {str(e)}\n{traceback.format_exc()}"
+            logger.error(f"[Bridge] [Auto-TB] {error_msg}")
+            return safe_json_dumps({
+                "success": False,
+                "error": error_msg
+            })
+    
     def _on_progress(self, message: str, percentage: int):
         """處理進度更新"""
         logger.info(f"[PROGRESS] {percentage}% - {message}")
@@ -501,3 +653,143 @@ class HybridBridge(QObject):
         """處理分析錯誤"""
         logger.error(f"[ERROR] 分析錯誤: {error_message}")
         self.analysisError.emit(error_message)
+    
+    @pyqtSlot(str, result=str)
+    def run_hardware_pipeline(self, verilog_path: str) -> str:
+        """
+        執行硬體分析流水線（一鍵執行）
+        
+        前端呼叫此方法後，自動執行：
+        1. Stage 1: Verilog 解析
+        2. Stage 2: 圖形建立與風險檢測
+        3. 複製 JSON 到前端資料夾
+        
+        Args:
+            verilog_path: Verilog 檔案路徑（.v 或 .sv）
+            
+        Returns:
+            JSON 字串，格式：
+            {
+                "success": bool,
+                "message": str,
+                "data": {
+                    "reactflow_nodes": [...],
+                    "reactflow_edges": [...]
+                },
+                "error": Optional[str]
+            }
+        """
+        logger.info(f"[Bridge] [Hardware Pipeline] 開始執行硬體流水線: {verilog_path}")
+        
+        try:
+            # 導入流水線模組
+            from src.auto_hardware_pipeline import HardwarePipeline
+            
+            # 建立流水線實例
+            pipeline = HardwarePipeline(
+                output_dir="output",
+                frontend_data_dir="frontend/src/data"
+            )
+            
+            # 執行完整流水線
+            result = pipeline.run_full_pipeline(verilog_path)
+            
+            if result["success"]:
+                logger.info(f"[Bridge] [Hardware Pipeline] 執行成功")
+                
+                # 讀取生成的 React Flow 資料
+                import json
+                from pathlib import Path
+                
+                reactflow_json_path = Path(result["stage2_output"])
+                
+                if reactflow_json_path.exists():
+                    with open(reactflow_json_path, 'r', encoding='utf-8') as f:
+                        reactflow_data = json.load(f)
+                    
+                    response = {
+                        "success": True,
+                        "message": result["message"],
+                        "data": reactflow_data,
+                        "details": {
+                            "stage1_output": result["stage1_output"],
+                            "stage2_output": result["stage2_output"],
+                            "copied_files": result["copied_files"]
+                        }
+                    }
+                else:
+                    response = {
+                        "success": False,
+                        "message": "流水線執行成功但找不到輸出檔案",
+                        "error": f"找不到 {reactflow_json_path}"
+                    }
+            else:
+                logger.error(f"[Bridge] [Hardware Pipeline] 執行失敗: {result.get('error')}")
+                response = {
+                    "success": False,
+                    "message": result.get("message", "執行失敗"),
+                    "error": result.get("error")
+                }
+            
+            return safe_json_dumps(response)
+            
+        except ImportError as e:
+            error_msg = f"無法導入流水線模組: {str(e)}\n請確認 auto_hardware_pipeline.py 是否存在"
+            logger.error(f"[Bridge] [Hardware Pipeline] {error_msg}")
+            return safe_json_dumps({
+                "success": False,
+                "error": error_msg
+            })
+            
+        except Exception as e:
+            error_msg = f"硬體流水線執行錯誤: {str(e)}\n{traceback.format_exc()}"
+            logger.error(f"[Bridge] [Hardware Pipeline] {error_msg}")
+            return safe_json_dumps({
+                "success": False,
+                "error": error_msg
+            })
+    
+    @pyqtSlot(result=str)
+    def open_verilog_file_dialog(self) -> str:
+        """
+        開啟 Verilog 檔案選擇對話框
+        
+        Returns:
+            JSON 字串，格式：
+            {
+                "success": bool,
+                "file_path": str,
+                "cancelled": bool
+            }
+        """
+        try:
+            logger.info("[Bridge] 開啟 Verilog 檔案選擇對話框")
+            
+            file_path, _ = QFileDialog.getOpenFileName(
+                self.parent_widget,
+                "選擇 Verilog 檔案",
+                "",
+                "Verilog Files (*.v *.sv);;All Files (*.*)"
+            )
+            
+            if file_path:
+                logger.info(f"[Bridge] 使用者選擇檔案: {file_path}")
+                return safe_json_dumps({
+                    "success": True,
+                    "file_path": file_path,
+                    "cancelled": False
+                })
+            else:
+                logger.info("[Bridge] 使用者取消選擇")
+                return safe_json_dumps({
+                    "success": False,
+                    "cancelled": True
+                })
+                
+        except Exception as e:
+            error_msg = f"開啟檔案對話框失敗: {str(e)}"
+            logger.error(f"[Bridge] {error_msg}")
+            return safe_json_dumps({
+                "success": False,
+                "error": error_msg
+            })

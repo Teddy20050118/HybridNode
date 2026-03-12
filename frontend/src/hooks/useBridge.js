@@ -157,6 +157,8 @@ export function useBridge() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  // bridge 用 state 管理（而非僅用 ref），確保設定後觸發重新渲染
+  const [bridge, setBridge] = useState(null);
   const bridgeRef = useRef(null);
 
   /**
@@ -234,6 +236,7 @@ export function useBridge() {
       .then((bridgeObj) => {
         console.log('[Bridge] Connected successfully');
         bridgeRef.current = bridgeObj;
+        setBridge(bridgeObj);
         setIsReady(true);
         setConnectionStatus('connected');
 
@@ -340,7 +343,7 @@ export function useBridge() {
   }, []);
 
   return {
-    bridge: bridgeRef.current,
+    bridge,
     isReady,
     connectionStatus,
     graphData,

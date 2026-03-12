@@ -1,0 +1,2025 @@
+{
+  "reactflow_nodes": [
+    {
+      "id": "ATE::clk",
+      "position": {
+        "x": 4.775764119297848,
+        "y": 494.8357903163943
+      },
+      "data": {
+        "label": "clk",
+        "originalId": "clk",
+        "type": "input",
+        "width": 1,
+        "module": "ATE",
+        "target_module": null
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "ATE::reset",
+      "position": {
+        "x": 400.22229982231823,
+        "y": 238.61778229745542
+      },
+      "data": {
+        "label": "reset",
+        "originalId": "reset",
+        "type": "input",
+        "width": 1,
+        "module": "ATE",
+        "target_module": null
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "ATE::pix_data",
+      "position": {
+        "x": -327.33156222120755,
+        "y": -379.76407545328277
+      },
+      "data": {
+        "label": "pix_data",
+        "originalId": "pix_data",
+        "type": "input",
+        "width": 8,
+        "module": "ATE",
+        "target_module": null,
+        "msb": "7",
+        "lsb": "0"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "ATE::type",
+      "position": {
+        "x": -427.974921069449,
+        "y": 282.3137545118508
+      },
+      "data": {
+        "label": "type",
+        "originalId": "type",
+        "type": "input",
+        "width": 1,
+        "module": "ATE",
+        "target_module": null,
+        "risk": "unused"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "ATE::bin",
+      "position": {
+        "x": 175.08433669049631,
+        "y": 425.29866919442185
+      },
+      "data": {
+        "label": "bin",
+        "originalId": "bin",
+        "type": "reg",
+        "width": 1,
+        "module": "ATE",
+        "target_module": null
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "ATE::threshold",
+      "position": {
+        "x": -354.45398942234164,
+        "y": 394.34667115888317
+      },
+      "data": {
+        "label": "threshold",
+        "originalId": "threshold",
+        "type": "reg",
+        "width": 8,
+        "module": "ATE",
+        "target_module": null,
+        "msb": "7",
+        "lsb": "0"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "ATE::col",
+      "position": {
+        "x": 379.67319777951525,
+        "y": -324.26544780157747
+      },
+      "data": {
+        "label": "col",
+        "originalId": "col",
+        "type": "reg",
+        "width": 7,
+        "module": "ATE",
+        "target_module": null,
+        "msb": "6",
+        "lsb": "0"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "ATE::Counter",
+      "position": {
+        "x": -395.76357858490184,
+        "y": -294.4688286100436
+      },
+      "data": {
+        "label": "Counter",
+        "originalId": "Counter",
+        "type": "reg",
+        "width": 6,
+        "module": "ATE",
+        "target_module": null,
+        "msb": "5",
+        "lsb": "0"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "ATE::block_count",
+      "position": {
+        "x": -289.35074881028135,
+        "y": 312.8635239488967
+      },
+      "data": {
+        "label": "block_count",
+        "originalId": "block_count",
+        "type": "reg",
+        "width": 13,
+        "module": "ATE",
+        "target_module": null,
+        "risk": "unused",
+        "msb": "12",
+        "lsb": "0"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "ATE::en",
+      "position": {
+        "x": 134.9092372753917,
+        "y": -406.9970289921492
+      },
+      "data": {
+        "label": "en",
+        "originalId": "en",
+        "type": "reg",
+        "width": 1,
+        "module": "ATE",
+        "target_module": null
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "ATE::state",
+      "position": {
+        "x": 170.65518189691036,
+        "y": -456.86880988204217
+      },
+      "data": {
+        "label": "state",
+        "originalId": "state",
+        "type": "reg",
+        "width": 1,
+        "module": "ATE",
+        "target_module": null
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "ATE::cs",
+      "position": {
+        "x": -407.059218545957,
+        "y": -210.92151896830242
+      },
+      "data": {
+        "label": "cs",
+        "originalId": "cs",
+        "type": "reg",
+        "width": 2,
+        "module": "ATE",
+        "target_module": null,
+        "risk": "unused",
+        "msb": "1",
+        "lsb": "0"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "ATE::ns",
+      "position": {
+        "x": -54.781478130228074,
+        "y": 464.30105473095625
+      },
+      "data": {
+        "label": "ns",
+        "originalId": "ns",
+        "type": "reg",
+        "width": 2,
+        "module": "ATE",
+        "target_module": null,
+        "risk": "unused",
+        "msb": "1",
+        "lsb": "0"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "ATE::_en",
+      "position": {
+        "x": -443.15828173011965,
+        "y": 142.95305379061097
+      },
+      "data": {
+        "label": "_en",
+        "originalId": "_en",
+        "type": "wire",
+        "width": 1,
+        "module": "ATE",
+        "target_module": null,
+        "risk": "unused"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "ATE::_bin",
+      "position": {
+        "x": 116.76680703643407,
+        "y": -487.7416241303709
+      },
+      "data": {
+        "label": "_bin",
+        "originalId": "_bin",
+        "type": "wire",
+        "width": 1,
+        "module": "ATE",
+        "target_module": null
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "ATE::z",
+      "position": {
+        "x": 217.5873206287832,
+        "y": -428.49910751519275
+      },
+      "data": {
+        "label": "z",
+        "originalId": "z",
+        "type": "wire",
+        "width": 1,
+        "module": "ATE",
+        "target_module": null
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "ATE::_delay",
+      "position": {
+        "x": -261.8789755798637,
+        "y": 448.7029187365258
+      },
+      "data": {
+        "label": "_delay",
+        "originalId": "_delay",
+        "type": "wire",
+        "width": 1,
+        "module": "ATE",
+        "target_module": null,
+        "risk": "unused"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "ATE::_col",
+      "position": {
+        "x": 456.1827149602651,
+        "y": 244.82533885303138
+      },
+      "data": {
+        "label": "_col",
+        "originalId": "_col",
+        "type": "wire",
+        "width": 7,
+        "module": "ATE",
+        "target_module": null,
+        "msb": "6",
+        "lsb": "0"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "ATE::c_bound",
+      "position": {
+        "x": -209.08735078034522,
+        "y": -450.0932791889783
+      },
+      "data": {
+        "label": "c_bound",
+        "originalId": "c_bound",
+        "type": "wire",
+        "width": 7,
+        "module": "ATE",
+        "target_module": null,
+        "msb": "6",
+        "lsb": "0"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "ATE::_Counter",
+      "position": {
+        "x": 383.10981191738455,
+        "y": -248.01292119493078
+      },
+      "data": {
+        "label": "_Counter",
+        "originalId": "_Counter",
+        "type": "wire",
+        "width": 6,
+        "module": "ATE",
+        "target_module": null,
+        "msb": "5",
+        "lsb": "0"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "ATE::_threshold",
+      "position": {
+        "x": -477.05193161220575,
+        "y": 54.188613717891485
+      },
+      "data": {
+        "label": "_threshold",
+        "originalId": "_threshold",
+        "type": "wire",
+        "width": 8,
+        "module": "ATE",
+        "target_module": null,
+        "msb": "7",
+        "lsb": "0"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "ATE::Thres",
+      "position": {
+        "x": -393.24795673687277,
+        "y": 342.50846454723603
+      },
+      "data": {
+        "label": "Thres",
+        "originalId": "Thres",
+        "type": "wire",
+        "width": 8,
+        "module": "ATE",
+        "target_module": null,
+        "msb": "7",
+        "lsb": "0"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "ATE::Max",
+      "position": {
+        "x": -205.8923485108467,
+        "y": 408.6723165682643
+      },
+      "data": {
+        "label": "Max",
+        "originalId": "Max",
+        "type": "wire",
+        "width": 8,
+        "module": "ATE",
+        "target_module": null,
+        "msb": "7",
+        "lsb": "0"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "ATE::Min",
+      "position": {
+        "x": -3.5440179542542927,
+        "y": 414.3440083374665
+      },
+      "data": {
+        "label": "Min",
+        "originalId": "Min",
+        "type": "wire",
+        "width": 8,
+        "module": "ATE",
+        "target_module": null,
+        "msb": "7",
+        "lsb": "0"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "ATE::pix_out",
+      "position": {
+        "x": 72.29268119026105,
+        "y": -471.4420671131761
+      },
+      "data": {
+        "label": "pix_out",
+        "originalId": "pix_out",
+        "type": "wire",
+        "width": 8,
+        "module": "ATE",
+        "target_module": null,
+        "msb": "7",
+        "lsb": "0"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "ATE::F1",
+      "position": {
+        "x": 490.85982362163185,
+        "y": 149.1762214080421
+      },
+      "data": {
+        "label": "F1",
+        "originalId": "F1",
+        "type": "submodule",
+        "width": 1,
+        "module": "ATE",
+        "target_module": "FIFO_64"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "ATE::mm0",
+      "position": {
+        "x": 362.1684693085208,
+        "y": 375.9999428629712
+      },
+      "data": {
+        "label": "mm0",
+        "originalId": "mm0",
+        "type": "submodule",
+        "width": 1,
+        "module": "ATE",
+        "target_module": "MAX_MIN"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "ATE::th0",
+      "position": {
+        "x": 71.52086177775763,
+        "y": 487.74339110445754
+      },
+      "data": {
+        "label": "th0",
+        "originalId": "th0",
+        "type": "submodule",
+        "width": 1,
+        "module": "ATE",
+        "target_module": "THRES_GEN"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "MAX_MIN::pix_data",
+      "position": {
+        "x": -442.56603376212655,
+        "y": -240.30596307705477
+      },
+      "data": {
+        "label": "pix_data",
+        "originalId": "pix_data",
+        "type": "input",
+        "width": 8,
+        "module": "MAX_MIN",
+        "target_module": null,
+        "msb": "7",
+        "lsb": "0"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "MAX_MIN::clk",
+      "position": {
+        "x": -491.11813470406616,
+        "y": -77.16058496374582
+      },
+      "data": {
+        "label": "clk",
+        "originalId": "clk",
+        "type": "input",
+        "width": 1,
+        "module": "MAX_MIN",
+        "target_module": null,
+        "risk": "unused"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "MAX_MIN::reset",
+      "position": {
+        "x": -165.6777882863865,
+        "y": -432.7288274925193
+      },
+      "data": {
+        "label": "reset",
+        "originalId": "reset",
+        "type": "input",
+        "width": 1,
+        "module": "MAX_MIN",
+        "target_module": null,
+        "risk": "unused"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "MAX_MIN::cnt",
+      "position": {
+        "x": 467.86214513933305,
+        "y": -128.71181337461616
+      },
+      "data": {
+        "label": "cnt",
+        "originalId": "cnt",
+        "type": "input",
+        "width": 6,
+        "module": "MAX_MIN",
+        "target_module": null,
+        "risk": "unused",
+        "msb": "5",
+        "lsb": "0"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "MAX_MIN::Max",
+      "position": {
+        "x": -369.137285754623,
+        "y": 259.07450144164227
+      },
+      "data": {
+        "label": "Max",
+        "originalId": "Max",
+        "type": "reg",
+        "width": 8,
+        "module": "MAX_MIN",
+        "target_module": null,
+        "msb": "7",
+        "lsb": "0"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "MAX_MIN::Min",
+      "position": {
+        "x": -298.8769471805007,
+        "y": 392.95461809505065
+      },
+      "data": {
+        "label": "Min",
+        "originalId": "Min",
+        "type": "reg",
+        "width": 8,
+        "module": "MAX_MIN",
+        "target_module": null,
+        "msb": "7",
+        "lsb": "0"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "FIFO_64::pix_data",
+      "position": {
+        "x": -185.50783506918515,
+        "y": 484.7065734903501
+      },
+      "data": {
+        "label": "pix_data",
+        "originalId": "pix_data",
+        "type": "input",
+        "width": 1,
+        "module": "FIFO_64",
+        "target_module": null,
+        "msb": "data_width",
+        "lsb": "0"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "FIFO_64::clk",
+      "position": {
+        "x": 291.68513846518795,
+        "y": -396.18081509457966
+      },
+      "data": {
+        "label": "clk",
+        "originalId": "clk",
+        "type": "input",
+        "width": 1,
+        "module": "FIFO_64",
+        "target_module": null,
+        "risk": "unused"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "FIFO_64::Addr",
+      "position": {
+        "x": -479.044181318292,
+        "y": 184.59595281036871
+      },
+      "data": {
+        "label": "Addr",
+        "originalId": "Addr",
+        "type": "input",
+        "width": 6,
+        "module": "FIFO_64",
+        "target_module": null,
+        "risk": "unused",
+        "msb": "5",
+        "lsb": "0"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "FIFO_64::pix_out",
+      "position": {
+        "x": 246.77019007620393,
+        "y": 403.55362531367496
+      },
+      "data": {
+        "label": "pix_out",
+        "originalId": "pix_out",
+        "type": "reg",
+        "width": 1,
+        "module": "FIFO_64",
+        "target_module": null,
+        "risk": "missing_reset",
+        "msb": "data_width",
+        "lsb": "0"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "FIFO_64::fifo",
+      "position": {
+        "x": 262.4091311730569,
+        "y": -436.5498454694593
+      },
+      "data": {
+        "label": "fifo",
+        "originalId": "fifo",
+        "type": "reg",
+        "width": 1,
+        "module": "FIFO_64",
+        "target_module": null,
+        "risk": "missing_reset",
+        "msb": "data_width",
+        "lsb": "0"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "THRES_GEN::Max",
+      "position": {
+        "x": 17.58308601896377,
+        "y": -483.7981070914942
+      },
+      "data": {
+        "label": "Max",
+        "originalId": "Max",
+        "type": "input",
+        "width": 8,
+        "module": "THRES_GEN",
+        "target_module": null,
+        "msb": "7",
+        "lsb": "0"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "THRES_GEN::Min",
+      "position": {
+        "x": 449.7758363794848,
+        "y": 190.00604013507512
+      },
+      "data": {
+        "label": "Min",
+        "originalId": "Min",
+        "type": "input",
+        "width": 8,
+        "module": "THRES_GEN",
+        "target_module": null,
+        "msb": "7",
+        "lsb": "0"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "THRES_GEN::clk",
+      "position": {
+        "x": -26.653689297350677,
+        "y": -496.2642691695228
+      },
+      "data": {
+        "label": "clk",
+        "originalId": "clk",
+        "type": "input",
+        "width": 1,
+        "module": "THRES_GEN",
+        "target_module": null,
+        "risk": "unused"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "THRES_GEN::reset",
+      "position": {
+        "x": -333.1588304276219,
+        "y": -320.39575022593186
+      },
+      "data": {
+        "label": "reset",
+        "originalId": "reset",
+        "type": "input",
+        "width": 1,
+        "module": "THRES_GEN",
+        "target_module": null,
+        "risk": "unused"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "THRES_GEN::en",
+      "position": {
+        "x": 354.0139454134665,
+        "y": 303.2899304339971
+      },
+      "data": {
+        "label": "en",
+        "originalId": "en",
+        "type": "input",
+        "width": 1,
+        "module": "THRES_GEN",
+        "target_module": null,
+        "risk": "unused"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "THRES_GEN::Thres",
+      "position": {
+        "x": 489.7311296316181,
+        "y": 13.099289658457534
+      },
+      "data": {
+        "label": "Thres",
+        "originalId": "Thres",
+        "type": "reg",
+        "width": 8,
+        "module": "THRES_GEN",
+        "target_module": null,
+        "risk": "unused",
+        "msb": "7",
+        "lsb": "0"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "THRES_GEN::Cin",
+      "position": {
+        "x": -438.76255248927316,
+        "y": 218.65525648080416
+      },
+      "data": {
+        "label": "Cin",
+        "originalId": "Cin",
+        "type": "wire",
+        "width": 1,
+        "module": "THRES_GEN",
+        "target_module": null
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "THRES_GEN::C_out",
+      "position": {
+        "x": 457.5027955619254,
+        "y": 107.98147150301068
+      },
+      "data": {
+        "label": "C_out",
+        "originalId": "C_out",
+        "type": "wire",
+        "width": 1,
+        "module": "THRES_GEN",
+        "target_module": null
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "THRES_GEN::Cm",
+      "position": {
+        "x": 469.86701748675875,
+        "y": -29.417777518025378
+      },
+      "data": {
+        "label": "Cm",
+        "originalId": "Cm",
+        "type": "wire",
+        "width": 7,
+        "module": "THRES_GEN",
+        "target_module": null,
+        "risk": "unused",
+        "msb": "6",
+        "lsb": "0"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "THRES_GEN::sum",
+      "position": {
+        "x": 418.0585664786458,
+        "y": -89.70572106170117
+      },
+      "data": {
+        "label": "sum",
+        "originalId": "sum",
+        "type": "wire",
+        "width": 8,
+        "module": "THRES_GEN",
+        "target_module": null,
+        "risk": "unused",
+        "msb": "7",
+        "lsb": "0"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "THRES_GEN::f0",
+      "position": {
+        "x": -395.56143312001905,
+        "y": -341.88605398100714
+      },
+      "data": {
+        "label": "f0",
+        "originalId": "f0",
+        "type": "submodule",
+        "width": 1,
+        "module": "THRES_GEN",
+        "target_module": "FA"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "THRES_GEN::f1",
+      "position": {
+        "x": -487.4356127522307,
+        "y": 106.32052295166345
+      },
+      "data": {
+        "label": "f1",
+        "originalId": "f1",
+        "type": "submodule",
+        "width": 1,
+        "module": "THRES_GEN",
+        "target_module": "FA"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "THRES_GEN::f2",
+      "position": {
+        "x": -424.4219193241802,
+        "y": 14.553934917474976
+      },
+      "data": {
+        "label": "f2",
+        "originalId": "f2",
+        "type": "submodule",
+        "width": 1,
+        "module": "THRES_GEN",
+        "target_module": "FA"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "THRES_GEN::f3",
+      "position": {
+        "x": 466.0548730211834,
+        "y": -178.84817793139544
+      },
+      "data": {
+        "label": "f3",
+        "originalId": "f3",
+        "type": "submodule",
+        "width": 1,
+        "module": "THRES_GEN",
+        "target_module": "FA"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "THRES_GEN::f4",
+      "position": {
+        "x": -145.15250606294757,
+        "y": 440.73637545330837
+      },
+      "data": {
+        "label": "f4",
+        "originalId": "f4",
+        "type": "submodule",
+        "width": 1,
+        "module": "THRES_GEN",
+        "target_module": "FA"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "THRES_GEN::f5",
+      "position": {
+        "x": -258.6639359762702,
+        "y": -433.76798589885817
+      },
+      "data": {
+        "label": "f5",
+        "originalId": "f5",
+        "type": "submodule",
+        "width": 1,
+        "module": "THRES_GEN",
+        "target_module": "FA"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "THRES_GEN::f6",
+      "position": {
+        "x": -284.00941120124025,
+        "y": -394.95917644404113
+      },
+      "data": {
+        "label": "f6",
+        "originalId": "f6",
+        "type": "submodule",
+        "width": 1,
+        "module": "THRES_GEN",
+        "target_module": "FA"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "THRES_GEN::f7",
+      "position": {
+        "x": 407.70010086777665,
+        "y": 309.8951237172898
+      },
+      "data": {
+        "label": "f7",
+        "originalId": "f7",
+        "type": "submodule",
+        "width": 1,
+        "module": "THRES_GEN",
+        "target_module": "FA"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "FA::a",
+      "position": {
+        "x": 144.02862554334197,
+        "y": 465.57366919620245
+      },
+      "data": {
+        "label": "a",
+        "originalId": "a",
+        "type": "input",
+        "width": 1,
+        "module": "FA",
+        "target_module": null
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "FA::b",
+      "position": {
+        "x": 338.43031865404384,
+        "y": -366.19086928054554
+      },
+      "data": {
+        "label": "b",
+        "originalId": "b",
+        "type": "input",
+        "width": 1,
+        "module": "FA",
+        "target_module": null
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "FA::cin",
+      "position": {
+        "x": 487.6503785286994,
+        "y": 62.45743558795565
+      },
+      "data": {
+        "label": "cin",
+        "originalId": "cin",
+        "type": "input",
+        "width": 1,
+        "module": "FA",
+        "target_module": null
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "FA::s",
+      "position": {
+        "x": 212.03612908902744,
+        "y": 456.4730834867564
+      },
+      "data": {
+        "label": "s",
+        "originalId": "s",
+        "type": "output",
+        "width": 1,
+        "module": "FA",
+        "target_module": null
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "FA::cout",
+      "position": {
+        "x": -95.75272073032805,
+        "y": -481.992072545556
+      },
+      "data": {
+        "label": "cout",
+        "originalId": "cout",
+        "type": "output",
+        "width": 1,
+        "module": "FA",
+        "target_module": null
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "FA::s0",
+      "position": {
+        "x": -456.27194631665975,
+        "y": -78.53329360680739
+      },
+      "data": {
+        "label": "s0",
+        "originalId": "s0",
+        "type": "wire",
+        "width": 1,
+        "module": "FA",
+        "target_module": null
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "FA::c0",
+      "position": {
+        "x": 308.1167248682585,
+        "y": 397.642921309912
+      },
+      "data": {
+        "label": "c0",
+        "originalId": "c0",
+        "type": "wire",
+        "width": 1,
+        "module": "FA",
+        "target_module": null
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "FA::c1",
+      "position": {
+        "x": -500.00000000000006,
+        "y": -5.032782815196474
+      },
+      "data": {
+        "label": "c1",
+        "originalId": "c1",
+        "type": "wire",
+        "width": 1,
+        "module": "FA",
+        "target_module": null
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "FA::u0",
+      "position": {
+        "x": -56.13119553248791,
+        "y": -465.29683879158057
+      },
+      "data": {
+        "label": "u0",
+        "originalId": "u0",
+        "type": "submodule",
+        "width": 1,
+        "module": "FA",
+        "target_module": "HA"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "FA::u1",
+      "position": {
+        "x": -467.14879612776946,
+        "y": -136.8159166450358
+      },
+      "data": {
+        "label": "u1",
+        "originalId": "u1",
+        "type": "submodule",
+        "width": 1,
+        "module": "FA",
+        "target_module": "HA"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "FA::g0",
+      "position": {
+        "x": 497.3187116748156,
+        "y": -78.0313819321048
+      },
+      "data": {
+        "label": "g0",
+        "originalId": "g0",
+        "type": "submodule",
+        "width": 1,
+        "module": "FA",
+        "target_module": "or"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "HA::a",
+      "position": {
+        "x": 76.88063916175402,
+        "y": 447.4572210803955
+      },
+      "data": {
+        "label": "a",
+        "originalId": "a",
+        "type": "input",
+        "width": 1,
+        "module": "HA",
+        "target_module": null
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "HA::b",
+      "position": {
+        "x": -100.83322711851288,
+        "y": 490.90838813766663
+      },
+      "data": {
+        "label": "b",
+        "originalId": "b",
+        "type": "input",
+        "width": 1,
+        "module": "HA",
+        "target_module": null
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "HA::s",
+      "position": {
+        "x": 460.2909126597239,
+        "y": -228.4785695972348
+      },
+      "data": {
+        "label": "s",
+        "originalId": "s",
+        "type": "output",
+        "width": 1,
+        "module": "HA",
+        "target_module": null
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "HA::cout",
+      "position": {
+        "x": 308.39826879470394,
+        "y": -324.1828533131065
+      },
+      "data": {
+        "label": "cout",
+        "originalId": "cout",
+        "type": "output",
+        "width": 1,
+        "module": "HA",
+        "target_module": null,
+        "risk": "unused"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "HA::g0",
+      "position": {
+        "x": -151.563725264661,
+        "y": -483.6775243416465
+      },
+      "data": {
+        "label": "g0",
+        "originalId": "g0",
+        "type": "submodule",
+        "width": 1,
+        "module": "HA",
+        "target_module": "and"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "HA::g1",
+      "position": {
+        "x": 281.5046102345732,
+        "y": 330.1490952909533
+      },
+      "data": {
+        "label": "g1",
+        "originalId": "g1",
+        "type": "submodule",
+        "width": 1,
+        "module": "HA",
+        "target_module": "xor"
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "ATE::cnt63",
+      "position": {
+        "x": -464.54273032655584,
+        "y": -190.64273017439692
+      },
+      "data": {
+        "label": "cnt63",
+        "originalId": "cnt63",
+        "type": "unknown",
+        "width": 1,
+        "module": "ATE",
+        "target_module": null
+      },
+      "type": "customNode"
+    },
+    {
+      "id": "ATE::_state",
+      "position": {
+        "x": 419.09101488464813,
+        "y": -283.14613589015516
+      },
+      "data": {
+        "label": "_state",
+        "originalId": "_state",
+        "type": "unknown",
+        "width": 1,
+        "module": "ATE",
+        "target_module": null
+      },
+      "type": "customNode"
+    }
+  ],
+  "reactflow_edges": [
+    {
+      "id": "ATE::clk-ATE::F1-0",
+      "source": "ATE::clk",
+      "target": "ATE::F1",
+      "animated": false,
+      "data": {
+        "logic_type": "structural",
+        "assign_type": "port_map",
+        "originalSource": "clk",
+        "originalTarget": "F1"
+      }
+    },
+    {
+      "id": "ATE::clk-ATE::mm0-1",
+      "source": "ATE::clk",
+      "target": "ATE::mm0",
+      "animated": false,
+      "data": {
+        "logic_type": "structural",
+        "assign_type": "port_map",
+        "originalSource": "clk",
+        "originalTarget": "mm0"
+      }
+    },
+    {
+      "id": "ATE::clk-ATE::th0-2",
+      "source": "ATE::clk",
+      "target": "ATE::th0",
+      "animated": false,
+      "data": {
+        "logic_type": "structural",
+        "assign_type": "port_map",
+        "originalSource": "clk",
+        "originalTarget": "th0"
+      }
+    },
+    {
+      "id": "ATE::reset-ATE::mm0-3",
+      "source": "ATE::reset",
+      "target": "ATE::mm0",
+      "animated": false,
+      "data": {
+        "logic_type": "structural",
+        "assign_type": "port_map",
+        "originalSource": "reset",
+        "originalTarget": "mm0"
+      }
+    },
+    {
+      "id": "ATE::reset-ATE::th0-4",
+      "source": "ATE::reset",
+      "target": "ATE::th0",
+      "animated": false,
+      "data": {
+        "logic_type": "structural",
+        "assign_type": "port_map",
+        "originalSource": "reset",
+        "originalTarget": "th0"
+      }
+    },
+    {
+      "id": "ATE::pix_data-ATE::F1-5",
+      "source": "ATE::pix_data",
+      "target": "ATE::F1",
+      "animated": false,
+      "data": {
+        "logic_type": "structural",
+        "assign_type": "port_map",
+        "originalSource": "pix_data",
+        "originalTarget": "F1",
+        "risk": "width_mismatch"
+      },
+      "style": {
+        "stroke": "#FF9900",
+        "strokeWidth": 2
+      }
+    },
+    {
+      "id": "ATE::pix_data-ATE::mm0-6",
+      "source": "ATE::pix_data",
+      "target": "ATE::mm0",
+      "animated": false,
+      "data": {
+        "logic_type": "structural",
+        "assign_type": "port_map",
+        "originalSource": "pix_data",
+        "originalTarget": "mm0",
+        "risk": "width_mismatch"
+      },
+      "style": {
+        "stroke": "#FF9900",
+        "strokeWidth": 2
+      }
+    },
+    {
+      "id": "ATE::col-ATE::z-7",
+      "source": "ATE::col",
+      "target": "ATE::z",
+      "animated": false,
+      "data": {
+        "logic_type": "combinational",
+        "assign_type": "continuous",
+        "originalSource": "col",
+        "originalTarget": "z",
+        "risk": "width_mismatch"
+      },
+      "style": {
+        "stroke": "#FF9900",
+        "strokeWidth": 2
+      }
+    },
+    {
+      "id": "ATE::Counter-ATE::_Counter-8",
+      "source": "ATE::Counter",
+      "target": "ATE::_Counter",
+      "animated": false,
+      "data": {
+        "logic_type": "combinational",
+        "assign_type": "continuous",
+        "originalSource": "Counter",
+        "originalTarget": "_Counter"
+      }
+    },
+    {
+      "id": "ATE::Counter-ATE::cnt63-9",
+      "source": "ATE::Counter",
+      "target": "ATE::cnt63",
+      "animated": false,
+      "data": {
+        "logic_type": "combinational",
+        "assign_type": "continuous",
+        "originalSource": "Counter",
+        "originalTarget": "cnt63",
+        "risk": "width_mismatch"
+      },
+      "style": {
+        "stroke": "#FF9900",
+        "strokeWidth": 2
+      }
+    },
+    {
+      "id": "ATE::Counter-ATE::F1-10",
+      "source": "ATE::Counter",
+      "target": "ATE::F1",
+      "animated": false,
+      "data": {
+        "logic_type": "structural",
+        "assign_type": "port_map",
+        "originalSource": "Counter",
+        "originalTarget": "F1",
+        "risk": "width_mismatch"
+      },
+      "style": {
+        "stroke": "#FF9900",
+        "strokeWidth": 2
+      }
+    },
+    {
+      "id": "ATE::Counter-ATE::mm0-11",
+      "source": "ATE::Counter",
+      "target": "ATE::mm0",
+      "animated": false,
+      "data": {
+        "logic_type": "structural",
+        "assign_type": "port_map",
+        "originalSource": "Counter",
+        "originalTarget": "mm0",
+        "risk": "width_mismatch"
+      },
+      "style": {
+        "stroke": "#FF9900",
+        "strokeWidth": 2
+      }
+    },
+    {
+      "id": "ATE::en-ATE::th0-12",
+      "source": "ATE::en",
+      "target": "ATE::th0",
+      "animated": false,
+      "data": {
+        "logic_type": "structural",
+        "assign_type": "port_map",
+        "originalSource": "en",
+        "originalTarget": "th0"
+      }
+    },
+    {
+      "id": "ATE::_bin-ATE::bin-13",
+      "source": "ATE::_bin",
+      "target": "ATE::bin",
+      "animated": false,
+      "data": {
+        "logic_type": "sequential",
+        "assign_type": "nonblocking",
+        "originalSource": "_bin",
+        "originalTarget": "bin",
+        "sensitivity": [
+          "clk",
+          "reset"
+        ]
+      }
+    },
+    {
+      "id": "ATE::_col-ATE::col-14",
+      "source": "ATE::_col",
+      "target": "ATE::col",
+      "animated": false,
+      "data": {
+        "logic_type": "sequential",
+        "assign_type": "nonblocking",
+        "originalSource": "_col",
+        "originalTarget": "col",
+        "sensitivity": [
+          "clk",
+          "reset"
+        ]
+      }
+    },
+    {
+      "id": "ATE::c_bound-ATE::z-15",
+      "source": "ATE::c_bound",
+      "target": "ATE::z",
+      "animated": false,
+      "data": {
+        "logic_type": "combinational",
+        "assign_type": "continuous",
+        "originalSource": "c_bound",
+        "originalTarget": "z",
+        "risk": "width_mismatch"
+      },
+      "style": {
+        "stroke": "#FF9900",
+        "strokeWidth": 2
+      }
+    },
+    {
+      "id": "ATE::_Counter-ATE::Counter-16",
+      "source": "ATE::_Counter",
+      "target": "ATE::Counter",
+      "animated": false,
+      "data": {
+        "logic_type": "sequential",
+        "assign_type": "nonblocking",
+        "originalSource": "_Counter",
+        "originalTarget": "Counter",
+        "sensitivity": [
+          "clk",
+          "reset"
+        ]
+      }
+    },
+    {
+      "id": "ATE::_threshold-ATE::threshold-17",
+      "source": "ATE::_threshold",
+      "target": "ATE::threshold",
+      "animated": false,
+      "data": {
+        "logic_type": "sequential",
+        "assign_type": "nonblocking",
+        "originalSource": "_threshold",
+        "originalTarget": "threshold",
+        "sensitivity": [
+          "clk",
+          "reset"
+        ]
+      }
+    },
+    {
+      "id": "ATE::Thres-ATE::th0-18",
+      "source": "ATE::Thres",
+      "target": "ATE::th0",
+      "animated": false,
+      "data": {
+        "logic_type": "structural",
+        "assign_type": "port_map",
+        "originalSource": "Thres",
+        "originalTarget": "th0",
+        "risk": "width_mismatch"
+      },
+      "style": {
+        "stroke": "#FF9900",
+        "strokeWidth": 2
+      }
+    },
+    {
+      "id": "ATE::Max-ATE::mm0-19",
+      "source": "ATE::Max",
+      "target": "ATE::mm0",
+      "animated": false,
+      "data": {
+        "logic_type": "structural",
+        "assign_type": "port_map",
+        "originalSource": "Max",
+        "originalTarget": "mm0",
+        "risk": "width_mismatch"
+      },
+      "style": {
+        "stroke": "#FF9900",
+        "strokeWidth": 2
+      }
+    },
+    {
+      "id": "ATE::Max-ATE::th0-20",
+      "source": "ATE::Max",
+      "target": "ATE::th0",
+      "animated": false,
+      "data": {
+        "logic_type": "structural",
+        "assign_type": "port_map",
+        "originalSource": "Max",
+        "originalTarget": "th0",
+        "risk": "width_mismatch"
+      },
+      "style": {
+        "stroke": "#FF9900",
+        "strokeWidth": 2
+      }
+    },
+    {
+      "id": "ATE::Min-ATE::mm0-21",
+      "source": "ATE::Min",
+      "target": "ATE::mm0",
+      "animated": false,
+      "data": {
+        "logic_type": "structural",
+        "assign_type": "port_map",
+        "originalSource": "Min",
+        "originalTarget": "mm0",
+        "risk": "width_mismatch"
+      },
+      "style": {
+        "stroke": "#FF9900",
+        "strokeWidth": 2
+      }
+    },
+    {
+      "id": "ATE::Min-ATE::th0-22",
+      "source": "ATE::Min",
+      "target": "ATE::th0",
+      "animated": false,
+      "data": {
+        "logic_type": "structural",
+        "assign_type": "port_map",
+        "originalSource": "Min",
+        "originalTarget": "th0",
+        "risk": "width_mismatch"
+      },
+      "style": {
+        "stroke": "#FF9900",
+        "strokeWidth": 2
+      }
+    },
+    {
+      "id": "ATE::pix_out-ATE::F1-23",
+      "source": "ATE::pix_out",
+      "target": "ATE::F1",
+      "animated": false,
+      "data": {
+        "logic_type": "structural",
+        "assign_type": "port_map",
+        "originalSource": "pix_out",
+        "originalTarget": "F1",
+        "risk": "width_mismatch"
+      },
+      "style": {
+        "stroke": "#FF9900",
+        "strokeWidth": 2
+      }
+    },
+    {
+      "id": "MAX_MIN::pix_data-MAX_MIN::Max-24",
+      "source": "MAX_MIN::pix_data",
+      "target": "MAX_MIN::Max",
+      "animated": false,
+      "data": {
+        "logic_type": "sequential",
+        "assign_type": "nonblocking",
+        "originalSource": "pix_data",
+        "originalTarget": "Max",
+        "sensitivity": [
+          "clk",
+          "reset"
+        ]
+      }
+    },
+    {
+      "id": "MAX_MIN::pix_data-MAX_MIN::Min-25",
+      "source": "MAX_MIN::pix_data",
+      "target": "MAX_MIN::Min",
+      "animated": false,
+      "data": {
+        "logic_type": "sequential",
+        "assign_type": "nonblocking",
+        "originalSource": "pix_data",
+        "originalTarget": "Min",
+        "sensitivity": [
+          "clk",
+          "reset"
+        ]
+      }
+    },
+    {
+      "id": "FIFO_64::pix_data-FIFO_64::fifo-26",
+      "source": "FIFO_64::pix_data",
+      "target": "FIFO_64::fifo",
+      "animated": false,
+      "data": {
+        "logic_type": "sequential",
+        "assign_type": "nonblocking",
+        "originalSource": "pix_data",
+        "originalTarget": "fifo",
+        "sensitivity": [
+          "clk"
+        ]
+      }
+    },
+    {
+      "id": "FIFO_64::fifo-FIFO_64::pix_out-27",
+      "source": "FIFO_64::fifo",
+      "target": "FIFO_64::pix_out",
+      "animated": false,
+      "data": {
+        "logic_type": "sequential",
+        "assign_type": "nonblocking",
+        "originalSource": "fifo",
+        "originalTarget": "pix_out",
+        "sensitivity": [
+          "clk"
+        ]
+      }
+    },
+    {
+      "id": "THRES_GEN::Max-THRES_GEN::Cin-28",
+      "source": "THRES_GEN::Max",
+      "target": "THRES_GEN::Cin",
+      "animated": false,
+      "data": {
+        "logic_type": "combinational",
+        "assign_type": "continuous",
+        "originalSource": "Max",
+        "originalTarget": "Cin",
+        "risk": "width_mismatch"
+      },
+      "style": {
+        "stroke": "#FF9900",
+        "strokeWidth": 2
+      }
+    },
+    {
+      "id": "THRES_GEN::Min-THRES_GEN::Cin-29",
+      "source": "THRES_GEN::Min",
+      "target": "THRES_GEN::Cin",
+      "animated": false,
+      "data": {
+        "logic_type": "combinational",
+        "assign_type": "continuous",
+        "originalSource": "Min",
+        "originalTarget": "Cin",
+        "risk": "width_mismatch"
+      },
+      "style": {
+        "stroke": "#FF9900",
+        "strokeWidth": 2
+      }
+    },
+    {
+      "id": "THRES_GEN::Cin-THRES_GEN::f0-30",
+      "source": "THRES_GEN::Cin",
+      "target": "THRES_GEN::f0",
+      "animated": false,
+      "data": {
+        "logic_type": "structural",
+        "assign_type": "port_map",
+        "originalSource": "Cin",
+        "originalTarget": "f0"
+      }
+    },
+    {
+      "id": "THRES_GEN::C_out-THRES_GEN::f7-31",
+      "source": "THRES_GEN::C_out",
+      "target": "THRES_GEN::f7",
+      "animated": false,
+      "data": {
+        "logic_type": "structural",
+        "assign_type": "port_map",
+        "originalSource": "C_out",
+        "originalTarget": "f7"
+      }
+    },
+    {
+      "id": "FA::a-FA::u0-32",
+      "source": "FA::a",
+      "target": "FA::u0",
+      "animated": false,
+      "data": {
+        "logic_type": "structural",
+        "assign_type": "port_map",
+        "originalSource": "a",
+        "originalTarget": "u0"
+      }
+    },
+    {
+      "id": "FA::a-FA::g0-33",
+      "source": "FA::a",
+      "target": "FA::g0",
+      "animated": false,
+      "data": {
+        "logic_type": "structural",
+        "assign_type": "port_map",
+        "originalSource": "a",
+        "originalTarget": "g0"
+      }
+    },
+    {
+      "id": "FA::b-FA::u0-34",
+      "source": "FA::b",
+      "target": "FA::u0",
+      "animated": false,
+      "data": {
+        "logic_type": "structural",
+        "assign_type": "port_map",
+        "originalSource": "b",
+        "originalTarget": "u0"
+      }
+    },
+    {
+      "id": "FA::b-FA::g0-35",
+      "source": "FA::b",
+      "target": "FA::g0",
+      "animated": false,
+      "data": {
+        "logic_type": "structural",
+        "assign_type": "port_map",
+        "originalSource": "b",
+        "originalTarget": "g0"
+      }
+    },
+    {
+      "id": "FA::cin-FA::u1-36",
+      "source": "FA::cin",
+      "target": "FA::u1",
+      "animated": false,
+      "data": {
+        "logic_type": "structural",
+        "assign_type": "port_map",
+        "originalSource": "cin",
+        "originalTarget": "u1"
+      }
+    },
+    {
+      "id": "FA::s-FA::u1-37",
+      "source": "FA::s",
+      "target": "FA::u1",
+      "animated": false,
+      "data": {
+        "logic_type": "structural",
+        "assign_type": "port_map",
+        "originalSource": "s",
+        "originalTarget": "u1"
+      }
+    },
+    {
+      "id": "FA::cout-FA::g0-38",
+      "source": "FA::cout",
+      "target": "FA::g0",
+      "animated": false,
+      "data": {
+        "logic_type": "structural",
+        "assign_type": "port_map",
+        "originalSource": "cout",
+        "originalTarget": "g0"
+      }
+    },
+    {
+      "id": "FA::s0-FA::u0-39",
+      "source": "FA::s0",
+      "target": "FA::u0",
+      "animated": false,
+      "data": {
+        "logic_type": "structural",
+        "assign_type": "port_map",
+        "originalSource": "s0",
+        "originalTarget": "u0"
+      }
+    },
+    {
+      "id": "FA::s0-FA::u1-40",
+      "source": "FA::s0",
+      "target": "FA::u1",
+      "animated": false,
+      "data": {
+        "logic_type": "structural",
+        "assign_type": "port_map",
+        "originalSource": "s0",
+        "originalTarget": "u1"
+      }
+    },
+    {
+      "id": "FA::c0-FA::u0-41",
+      "source": "FA::c0",
+      "target": "FA::u0",
+      "animated": false,
+      "data": {
+        "logic_type": "structural",
+        "assign_type": "port_map",
+        "originalSource": "c0",
+        "originalTarget": "u0"
+      }
+    },
+    {
+      "id": "FA::c0-FA::g0-42",
+      "source": "FA::c0",
+      "target": "FA::g0",
+      "animated": false,
+      "data": {
+        "logic_type": "structural",
+        "assign_type": "port_map",
+        "originalSource": "c0",
+        "originalTarget": "g0"
+      }
+    },
+    {
+      "id": "FA::c1-FA::u1-43",
+      "source": "FA::c1",
+      "target": "FA::u1",
+      "animated": false,
+      "data": {
+        "logic_type": "structural",
+        "assign_type": "port_map",
+        "originalSource": "c1",
+        "originalTarget": "u1"
+      }
+    },
+    {
+      "id": "FA::c1-FA::g0-44",
+      "source": "FA::c1",
+      "target": "FA::g0",
+      "animated": false,
+      "data": {
+        "logic_type": "structural",
+        "assign_type": "port_map",
+        "originalSource": "c1",
+        "originalTarget": "g0"
+      }
+    },
+    {
+      "id": "HA::a-HA::g1-45",
+      "source": "HA::a",
+      "target": "HA::g1",
+      "animated": false,
+      "data": {
+        "logic_type": "structural",
+        "assign_type": "port_map",
+        "originalSource": "a",
+        "originalTarget": "g1"
+      }
+    },
+    {
+      "id": "HA::b-HA::g1-46",
+      "source": "HA::b",
+      "target": "HA::g1",
+      "animated": false,
+      "data": {
+        "logic_type": "structural",
+        "assign_type": "port_map",
+        "originalSource": "b",
+        "originalTarget": "g1"
+      }
+    },
+    {
+      "id": "HA::s-HA::g1-47",
+      "source": "HA::s",
+      "target": "HA::g1",
+      "animated": false,
+      "data": {
+        "logic_type": "structural",
+        "assign_type": "port_map",
+        "originalSource": "s",
+        "originalTarget": "g1"
+      }
+    },
+    {
+      "id": "ATE::cnt63-ATE::en-48",
+      "source": "ATE::cnt63",
+      "target": "ATE::en",
+      "animated": false,
+      "data": {
+        "logic_type": "sequential",
+        "assign_type": "nonblocking",
+        "originalSource": "cnt63",
+        "originalTarget": "en",
+        "sensitivity": [
+          "clk",
+          "reset"
+        ]
+      }
+    },
+    {
+      "id": "ATE::_state-ATE::state-49",
+      "source": "ATE::_state",
+      "target": "ATE::state",
+      "animated": false,
+      "data": {
+        "logic_type": "sequential",
+        "assign_type": "nonblocking",
+        "originalSource": "_state",
+        "originalTarget": "state",
+        "sensitivity": [
+          "clk",
+          "reset"
+        ]
+      }
+    }
+  ],
+  "risk_stats": {
+    "width_mismatch": 15,
+    "assignment_error": 0,
+    "missing_reset": 2,
+    "comb_loop": 0,
+    "unused": 18
+  },
+  "metadata": {
+    "source_file": "examples\\sample.v",
+    "total_nodes": 76,
+    "total_edges": 50,
+    "layout_algorithm": "spring",
+    "scale": 500.0
+  }
+}

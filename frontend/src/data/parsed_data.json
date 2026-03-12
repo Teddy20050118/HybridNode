@@ -1,0 +1,1851 @@
+{
+  "file": "examples\\sample.v",
+  "nodes": [
+    {
+      "id": "clk",
+      "type": "input",
+      "module": "ATE",
+      "width": 1,
+      "msb": null,
+      "lsb": null
+    },
+    {
+      "id": "reset",
+      "type": "input",
+      "module": "ATE",
+      "width": 1,
+      "msb": null,
+      "lsb": null
+    },
+    {
+      "id": "pix_data",
+      "type": "input",
+      "module": "ATE",
+      "width": 8,
+      "msb": "7",
+      "lsb": "0"
+    },
+    {
+      "id": "type",
+      "type": "input",
+      "module": "ATE",
+      "width": 1,
+      "msb": null,
+      "lsb": null
+    },
+    {
+      "id": "bin",
+      "type": "output",
+      "module": "ATE",
+      "width": 1,
+      "msb": null,
+      "lsb": null
+    },
+    {
+      "id": "threshold",
+      "type": "output",
+      "module": "ATE",
+      "width": 8,
+      "msb": "7",
+      "lsb": "0"
+    },
+    {
+      "id": "threshold",
+      "type": "reg",
+      "module": "ATE",
+      "width": 8,
+      "msb": "7",
+      "lsb": "0"
+    },
+    {
+      "id": "bin",
+      "type": "reg",
+      "module": "ATE",
+      "width": 1,
+      "msb": null,
+      "lsb": null
+    },
+    {
+      "id": "col",
+      "type": "reg",
+      "module": "ATE",
+      "width": 7,
+      "msb": "6",
+      "lsb": "0"
+    },
+    {
+      "id": "Counter",
+      "type": "reg",
+      "module": "ATE",
+      "width": 6,
+      "msb": "5",
+      "lsb": "0"
+    },
+    {
+      "id": "block_count",
+      "type": "reg",
+      "module": "ATE",
+      "width": 13,
+      "msb": "12",
+      "lsb": "0"
+    },
+    {
+      "id": "en",
+      "type": "reg",
+      "module": "ATE",
+      "width": 1,
+      "msb": null,
+      "lsb": null
+    },
+    {
+      "id": "state",
+      "type": "reg",
+      "module": "ATE",
+      "width": 1,
+      "msb": null,
+      "lsb": null
+    },
+    {
+      "id": "cs",
+      "type": "reg",
+      "module": "ATE",
+      "width": 2,
+      "msb": "1",
+      "lsb": "0"
+    },
+    {
+      "id": "ns",
+      "type": "reg",
+      "module": "ATE",
+      "width": 2,
+      "msb": "1",
+      "lsb": "0"
+    },
+    {
+      "id": "_en",
+      "type": "wire",
+      "module": "ATE",
+      "width": 1,
+      "msb": null,
+      "lsb": null
+    },
+    {
+      "id": "_bin",
+      "type": "wire",
+      "module": "ATE",
+      "width": 1,
+      "msb": null,
+      "lsb": null
+    },
+    {
+      "id": "z",
+      "type": "wire",
+      "module": "ATE",
+      "width": 1,
+      "msb": null,
+      "lsb": null
+    },
+    {
+      "id": "_delay",
+      "type": "wire",
+      "module": "ATE",
+      "width": 1,
+      "msb": null,
+      "lsb": null
+    },
+    {
+      "id": "_col",
+      "type": "wire",
+      "module": "ATE",
+      "width": 7,
+      "msb": "6",
+      "lsb": "0"
+    },
+    {
+      "id": "c_bound",
+      "type": "wire",
+      "module": "ATE",
+      "width": 7,
+      "msb": "6",
+      "lsb": "0"
+    },
+    {
+      "id": "_Counter",
+      "type": "wire",
+      "module": "ATE",
+      "width": 6,
+      "msb": "5",
+      "lsb": "0"
+    },
+    {
+      "id": "_threshold",
+      "type": "wire",
+      "module": "ATE",
+      "width": 8,
+      "msb": "7",
+      "lsb": "0"
+    },
+    {
+      "id": "Thres",
+      "type": "wire",
+      "module": "ATE",
+      "width": 8,
+      "msb": "7",
+      "lsb": "0"
+    },
+    {
+      "id": "Max",
+      "type": "wire",
+      "module": "ATE",
+      "width": 8,
+      "msb": "7",
+      "lsb": "0"
+    },
+    {
+      "id": "Min",
+      "type": "wire",
+      "module": "ATE",
+      "width": 8,
+      "msb": "7",
+      "lsb": "0"
+    },
+    {
+      "id": "pix_out",
+      "type": "wire",
+      "module": "ATE",
+      "width": 8,
+      "msb": "7",
+      "lsb": "0"
+    },
+    {
+      "id": "F1",
+      "type": "submodule",
+      "label": "F1 (FIFO_64)",
+      "module": "ATE",
+      "target_module": "FIFO_64"
+    },
+    {
+      "id": "mm0",
+      "type": "submodule",
+      "label": "mm0 (MAX_MIN)",
+      "module": "ATE",
+      "target_module": "MAX_MIN"
+    },
+    {
+      "id": "th0",
+      "type": "submodule",
+      "label": "th0 (THRES_GEN)",
+      "module": "ATE",
+      "target_module": "THRES_GEN"
+    },
+    {
+      "id": "pix_data",
+      "type": "input",
+      "module": "MAX_MIN",
+      "width": 8,
+      "msb": "7",
+      "lsb": "0"
+    },
+    {
+      "id": "clk",
+      "type": "input",
+      "module": "MAX_MIN",
+      "width": 1,
+      "msb": null,
+      "lsb": null
+    },
+    {
+      "id": "reset",
+      "type": "input",
+      "module": "MAX_MIN",
+      "width": 1,
+      "msb": null,
+      "lsb": null
+    },
+    {
+      "id": "cnt",
+      "type": "input",
+      "module": "MAX_MIN",
+      "width": 6,
+      "msb": "5",
+      "lsb": "0"
+    },
+    {
+      "id": "Max",
+      "type": "output",
+      "module": "MAX_MIN",
+      "width": 8,
+      "msb": "7",
+      "lsb": "0"
+    },
+    {
+      "id": "Max",
+      "type": "reg",
+      "module": "MAX_MIN",
+      "width": 8,
+      "msb": "7",
+      "lsb": "0"
+    },
+    {
+      "id": "Min",
+      "type": "output",
+      "module": "MAX_MIN",
+      "width": 8,
+      "msb": "7",
+      "lsb": "0"
+    },
+    {
+      "id": "Min",
+      "type": "reg",
+      "module": "MAX_MIN",
+      "width": 8,
+      "msb": "7",
+      "lsb": "0"
+    },
+    {
+      "id": "pix_data",
+      "type": "input",
+      "module": "FIFO_64",
+      "width": 1,
+      "msb": "data_width",
+      "lsb": "0"
+    },
+    {
+      "id": "clk",
+      "type": "input",
+      "module": "FIFO_64",
+      "width": 1,
+      "msb": null,
+      "lsb": null
+    },
+    {
+      "id": "Addr",
+      "type": "input",
+      "module": "FIFO_64",
+      "width": 6,
+      "msb": "5",
+      "lsb": "0"
+    },
+    {
+      "id": "pix_out",
+      "type": "output",
+      "module": "FIFO_64",
+      "width": 1,
+      "msb": "data_width",
+      "lsb": "0"
+    },
+    {
+      "id": "pix_out",
+      "type": "reg",
+      "module": "FIFO_64",
+      "width": 1,
+      "msb": "data_width",
+      "lsb": "0"
+    },
+    {
+      "id": "fifo",
+      "type": "reg",
+      "module": "FIFO_64",
+      "width": 1,
+      "msb": "data_width",
+      "lsb": "0"
+    },
+    {
+      "id": "Max",
+      "type": "input",
+      "module": "THRES_GEN",
+      "width": 8,
+      "msb": "7",
+      "lsb": "0"
+    },
+    {
+      "id": "Min",
+      "type": "input",
+      "module": "THRES_GEN",
+      "width": 8,
+      "msb": "7",
+      "lsb": "0"
+    },
+    {
+      "id": "clk",
+      "type": "input",
+      "module": "THRES_GEN",
+      "width": 1,
+      "msb": null,
+      "lsb": null
+    },
+    {
+      "id": "reset",
+      "type": "input",
+      "module": "THRES_GEN",
+      "width": 1,
+      "msb": null,
+      "lsb": null
+    },
+    {
+      "id": "en",
+      "type": "input",
+      "module": "THRES_GEN",
+      "width": 1,
+      "msb": null,
+      "lsb": null
+    },
+    {
+      "id": "Thres",
+      "type": "output",
+      "module": "THRES_GEN",
+      "width": 8,
+      "msb": "7",
+      "lsb": "0"
+    },
+    {
+      "id": "Thres",
+      "type": "reg",
+      "module": "THRES_GEN",
+      "width": 8,
+      "msb": "7",
+      "lsb": "0"
+    },
+    {
+      "id": "Cin",
+      "type": "wire",
+      "module": "THRES_GEN",
+      "width": 1,
+      "msb": null,
+      "lsb": null
+    },
+    {
+      "id": "C_out",
+      "type": "wire",
+      "module": "THRES_GEN",
+      "width": 1,
+      "msb": null,
+      "lsb": null
+    },
+    {
+      "id": "Cm",
+      "type": "wire",
+      "module": "THRES_GEN",
+      "width": 7,
+      "msb": "6",
+      "lsb": "0"
+    },
+    {
+      "id": "sum",
+      "type": "wire",
+      "module": "THRES_GEN",
+      "width": 8,
+      "msb": "7",
+      "lsb": "0"
+    },
+    {
+      "id": "f0",
+      "type": "submodule",
+      "label": "f0 (FA)",
+      "module": "THRES_GEN",
+      "target_module": "FA"
+    },
+    {
+      "id": "f1",
+      "type": "submodule",
+      "label": "f1 (FA)",
+      "module": "THRES_GEN",
+      "target_module": "FA"
+    },
+    {
+      "id": "f2",
+      "type": "submodule",
+      "label": "f2 (FA)",
+      "module": "THRES_GEN",
+      "target_module": "FA"
+    },
+    {
+      "id": "f3",
+      "type": "submodule",
+      "label": "f3 (FA)",
+      "module": "THRES_GEN",
+      "target_module": "FA"
+    },
+    {
+      "id": "f4",
+      "type": "submodule",
+      "label": "f4 (FA)",
+      "module": "THRES_GEN",
+      "target_module": "FA"
+    },
+    {
+      "id": "f5",
+      "type": "submodule",
+      "label": "f5 (FA)",
+      "module": "THRES_GEN",
+      "target_module": "FA"
+    },
+    {
+      "id": "f6",
+      "type": "submodule",
+      "label": "f6 (FA)",
+      "module": "THRES_GEN",
+      "target_module": "FA"
+    },
+    {
+      "id": "f7",
+      "type": "submodule",
+      "label": "f7 (FA)",
+      "module": "THRES_GEN",
+      "target_module": "FA"
+    },
+    {
+      "id": "a",
+      "type": "input",
+      "module": "FA",
+      "width": 1,
+      "msb": null,
+      "lsb": null
+    },
+    {
+      "id": "b",
+      "type": "input",
+      "module": "FA",
+      "width": 1,
+      "msb": null,
+      "lsb": null
+    },
+    {
+      "id": "cin",
+      "type": "input",
+      "module": "FA",
+      "width": 1,
+      "msb": null,
+      "lsb": null
+    },
+    {
+      "id": "s",
+      "type": "output",
+      "module": "FA",
+      "width": 1,
+      "msb": null,
+      "lsb": null
+    },
+    {
+      "id": "cout",
+      "type": "output",
+      "module": "FA",
+      "width": 1,
+      "msb": null,
+      "lsb": null
+    },
+    {
+      "id": "s0",
+      "type": "wire",
+      "module": "FA",
+      "width": 1,
+      "msb": null,
+      "lsb": null
+    },
+    {
+      "id": "c0",
+      "type": "wire",
+      "module": "FA",
+      "width": 1,
+      "msb": null,
+      "lsb": null
+    },
+    {
+      "id": "c1",
+      "type": "wire",
+      "module": "FA",
+      "width": 1,
+      "msb": null,
+      "lsb": null
+    },
+    {
+      "id": "u0",
+      "type": "submodule",
+      "label": "u0 (HA)",
+      "module": "FA",
+      "target_module": "HA"
+    },
+    {
+      "id": "u1",
+      "type": "submodule",
+      "label": "u1 (HA)",
+      "module": "FA",
+      "target_module": "HA"
+    },
+    {
+      "id": "g0",
+      "type": "submodule",
+      "label": "g0 (or)",
+      "module": "FA",
+      "target_module": "or"
+    },
+    {
+      "id": "a",
+      "type": "input",
+      "module": "HA",
+      "width": 1,
+      "msb": null,
+      "lsb": null
+    },
+    {
+      "id": "b",
+      "type": "input",
+      "module": "HA",
+      "width": 1,
+      "msb": null,
+      "lsb": null
+    },
+    {
+      "id": "s",
+      "type": "output",
+      "module": "HA",
+      "width": 1,
+      "msb": null,
+      "lsb": null
+    },
+    {
+      "id": "cout",
+      "type": "output",
+      "module": "HA",
+      "width": 1,
+      "msb": null,
+      "lsb": null
+    },
+    {
+      "id": "g0",
+      "type": "submodule",
+      "label": "g0 (and)",
+      "module": "HA",
+      "target_module": "and"
+    },
+    {
+      "id": "g1",
+      "type": "submodule",
+      "label": "g1 (xor)",
+      "module": "HA",
+      "target_module": "xor"
+    }
+  ],
+  "edges": [
+    {
+      "from": "Counter",
+      "to": "_Counter",
+      "assign_type": "continuous",
+      "logic_type": "combinational",
+      "module": "ATE"
+    },
+    {
+      "from": "Counter",
+      "to": "cnt63",
+      "assign_type": "continuous",
+      "logic_type": "combinational",
+      "module": "ATE"
+    },
+    {
+      "from": "col",
+      "to": "z",
+      "assign_type": "continuous",
+      "logic_type": "combinational",
+      "module": "ATE"
+    },
+    {
+      "from": "c_bound",
+      "to": "z",
+      "assign_type": "continuous",
+      "logic_type": "combinational",
+      "module": "ATE"
+    },
+    {
+      "from": "_Counter",
+      "to": "Counter",
+      "assign_type": "nonblocking",
+      "logic_type": "sequential",
+      "module": "ATE",
+      "sensitivity": [
+        "clk",
+        "reset"
+      ]
+    },
+    {
+      "from": "_state",
+      "to": "state",
+      "assign_type": "nonblocking",
+      "logic_type": "sequential",
+      "module": "ATE",
+      "sensitivity": [
+        "clk",
+        "reset"
+      ]
+    },
+    {
+      "from": "cnt63",
+      "to": "en",
+      "assign_type": "nonblocking",
+      "logic_type": "sequential",
+      "module": "ATE",
+      "sensitivity": [
+        "clk",
+        "reset"
+      ]
+    },
+    {
+      "from": "_col",
+      "to": "col",
+      "assign_type": "nonblocking",
+      "logic_type": "sequential",
+      "module": "ATE",
+      "sensitivity": [
+        "clk",
+        "reset"
+      ]
+    },
+    {
+      "from": "_threshold",
+      "to": "threshold",
+      "assign_type": "nonblocking",
+      "logic_type": "sequential",
+      "module": "ATE",
+      "sensitivity": [
+        "clk",
+        "reset"
+      ]
+    },
+    {
+      "from": "_bin",
+      "to": "bin",
+      "assign_type": "nonblocking",
+      "logic_type": "sequential",
+      "module": "ATE",
+      "sensitivity": [
+        "clk",
+        "reset"
+      ]
+    },
+    {
+      "from": "clk",
+      "to": "F1",
+      "assign_type": "port_map",
+      "logic_type": "structural"
+    },
+    {
+      "from": "pix_data",
+      "to": "F1",
+      "assign_type": "port_map",
+      "logic_type": "structural"
+    },
+    {
+      "from": "Counter",
+      "to": "F1",
+      "assign_type": "port_map",
+      "logic_type": "structural"
+    },
+    {
+      "from": "pix_out",
+      "to": "F1",
+      "assign_type": "port_map",
+      "logic_type": "structural"
+    },
+    {
+      "from": "pix_data",
+      "to": "mm0",
+      "assign_type": "port_map",
+      "logic_type": "structural"
+    },
+    {
+      "from": "clk",
+      "to": "mm0",
+      "assign_type": "port_map",
+      "logic_type": "structural"
+    },
+    {
+      "from": "reset",
+      "to": "mm0",
+      "assign_type": "port_map",
+      "logic_type": "structural"
+    },
+    {
+      "from": "Counter",
+      "to": "mm0",
+      "assign_type": "port_map",
+      "logic_type": "structural"
+    },
+    {
+      "from": "Max",
+      "to": "mm0",
+      "assign_type": "port_map",
+      "logic_type": "structural"
+    },
+    {
+      "from": "Min",
+      "to": "mm0",
+      "assign_type": "port_map",
+      "logic_type": "structural"
+    },
+    {
+      "from": "Max",
+      "to": "th0",
+      "assign_type": "port_map",
+      "logic_type": "structural"
+    },
+    {
+      "from": "Min",
+      "to": "th0",
+      "assign_type": "port_map",
+      "logic_type": "structural"
+    },
+    {
+      "from": "clk",
+      "to": "th0",
+      "assign_type": "port_map",
+      "logic_type": "structural"
+    },
+    {
+      "from": "reset",
+      "to": "th0",
+      "assign_type": "port_map",
+      "logic_type": "structural"
+    },
+    {
+      "from": "en",
+      "to": "th0",
+      "assign_type": "port_map",
+      "logic_type": "structural"
+    },
+    {
+      "from": "Thres",
+      "to": "th0",
+      "assign_type": "port_map",
+      "logic_type": "structural"
+    },
+    {
+      "from": "pix_data",
+      "to": "Max",
+      "assign_type": "nonblocking",
+      "logic_type": "sequential",
+      "module": "MAX_MIN",
+      "sensitivity": [
+        "clk",
+        "reset"
+      ]
+    },
+    {
+      "from": "pix_data",
+      "to": "Min",
+      "assign_type": "nonblocking",
+      "logic_type": "sequential",
+      "module": "MAX_MIN",
+      "sensitivity": [
+        "clk",
+        "reset"
+      ]
+    },
+    {
+      "from": "pix_data",
+      "to": "Max",
+      "assign_type": "nonblocking",
+      "logic_type": "sequential",
+      "module": "MAX_MIN",
+      "sensitivity": [
+        "clk",
+        "reset"
+      ]
+    },
+    {
+      "from": "pix_data",
+      "to": "Min",
+      "assign_type": "nonblocking",
+      "logic_type": "sequential",
+      "module": "MAX_MIN",
+      "sensitivity": [
+        "clk",
+        "reset"
+      ]
+    },
+    {
+      "from": "pix_data",
+      "to": "fifo",
+      "assign_type": "nonblocking",
+      "logic_type": "sequential",
+      "module": "FIFO_64",
+      "sensitivity": [
+        "clk"
+      ]
+    },
+    {
+      "from": "fifo",
+      "to": "pix_out",
+      "assign_type": "nonblocking",
+      "logic_type": "sequential",
+      "module": "FIFO_64",
+      "sensitivity": [
+        "clk"
+      ]
+    },
+    {
+      "from": "Max",
+      "to": "Cin",
+      "assign_type": "continuous",
+      "logic_type": "combinational",
+      "module": "THRES_GEN"
+    },
+    {
+      "from": "Min",
+      "to": "Cin",
+      "assign_type": "continuous",
+      "logic_type": "combinational",
+      "module": "THRES_GEN"
+    },
+    {
+      "from": "Cin",
+      "to": "f0",
+      "assign_type": "port_map",
+      "logic_type": "structural"
+    },
+    {
+      "from": "C_out",
+      "to": "f7",
+      "assign_type": "port_map",
+      "logic_type": "structural"
+    },
+    {
+      "from": "a",
+      "to": "u0",
+      "assign_type": "port_map",
+      "logic_type": "structural"
+    },
+    {
+      "from": "b",
+      "to": "u0",
+      "assign_type": "port_map",
+      "logic_type": "structural"
+    },
+    {
+      "from": "s0",
+      "to": "u0",
+      "assign_type": "port_map",
+      "logic_type": "structural"
+    },
+    {
+      "from": "c0",
+      "to": "u0",
+      "assign_type": "port_map",
+      "logic_type": "structural"
+    },
+    {
+      "from": "s0",
+      "to": "u1",
+      "assign_type": "port_map",
+      "logic_type": "structural"
+    },
+    {
+      "from": "cin",
+      "to": "u1",
+      "assign_type": "port_map",
+      "logic_type": "structural"
+    },
+    {
+      "from": "s",
+      "to": "u1",
+      "assign_type": "port_map",
+      "logic_type": "structural"
+    },
+    {
+      "from": "c1",
+      "to": "u1",
+      "assign_type": "port_map",
+      "logic_type": "structural"
+    },
+    {
+      "from": "cout",
+      "to": "g0",
+      "assign_type": "port_map",
+      "logic_type": "structural"
+    },
+    {
+      "from": "c0",
+      "to": "g0",
+      "assign_type": "port_map",
+      "logic_type": "structural"
+    },
+    {
+      "from": "c1",
+      "to": "g0",
+      "assign_type": "port_map",
+      "logic_type": "structural"
+    },
+    {
+      "from": "cout",
+      "to": "g0",
+      "assign_type": "port_map",
+      "logic_type": "structural"
+    },
+    {
+      "from": "a",
+      "to": "g0",
+      "assign_type": "port_map",
+      "logic_type": "structural"
+    },
+    {
+      "from": "b",
+      "to": "g0",
+      "assign_type": "port_map",
+      "logic_type": "structural"
+    },
+    {
+      "from": "s",
+      "to": "g1",
+      "assign_type": "port_map",
+      "logic_type": "structural"
+    },
+    {
+      "from": "a",
+      "to": "g1",
+      "assign_type": "port_map",
+      "logic_type": "structural"
+    },
+    {
+      "from": "b",
+      "to": "g1",
+      "assign_type": "port_map",
+      "logic_type": "structural"
+    }
+  ],
+  "modules": [
+    {
+      "name": "FIFO_64",
+      "nodes": [
+        {
+          "id": "pix_data",
+          "type": "input",
+          "module": "FIFO_64",
+          "width": 1,
+          "msb": "data_width",
+          "lsb": "0"
+        },
+        {
+          "id": "clk",
+          "type": "input",
+          "module": "FIFO_64",
+          "width": 1,
+          "msb": null,
+          "lsb": null
+        },
+        {
+          "id": "Addr",
+          "type": "input",
+          "module": "FIFO_64",
+          "width": 6,
+          "msb": "5",
+          "lsb": "0"
+        },
+        {
+          "id": "pix_out",
+          "type": "output",
+          "module": "FIFO_64",
+          "width": 1,
+          "msb": "data_width",
+          "lsb": "0"
+        },
+        {
+          "id": "pix_out",
+          "type": "reg",
+          "module": "FIFO_64",
+          "width": 1,
+          "msb": "data_width",
+          "lsb": "0"
+        },
+        {
+          "id": "fifo",
+          "type": "reg",
+          "module": "FIFO_64",
+          "width": 1,
+          "msb": "data_width",
+          "lsb": "0"
+        }
+      ],
+      "edges": [
+        {
+          "from": "pix_data",
+          "to": "fifo",
+          "assign_type": "nonblocking",
+          "logic_type": "sequential",
+          "module": "FIFO_64",
+          "sensitivity": [
+            "clk"
+          ]
+        },
+        {
+          "from": "fifo",
+          "to": "pix_out",
+          "assign_type": "nonblocking",
+          "logic_type": "sequential",
+          "module": "FIFO_64",
+          "sensitivity": [
+            "clk"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "MAX_MIN",
+      "nodes": [
+        {
+          "id": "pix_data",
+          "type": "input",
+          "module": "MAX_MIN",
+          "width": 8,
+          "msb": "7",
+          "lsb": "0"
+        },
+        {
+          "id": "clk",
+          "type": "input",
+          "module": "MAX_MIN",
+          "width": 1,
+          "msb": null,
+          "lsb": null
+        },
+        {
+          "id": "reset",
+          "type": "input",
+          "module": "MAX_MIN",
+          "width": 1,
+          "msb": null,
+          "lsb": null
+        },
+        {
+          "id": "cnt",
+          "type": "input",
+          "module": "MAX_MIN",
+          "width": 6,
+          "msb": "5",
+          "lsb": "0"
+        },
+        {
+          "id": "Max",
+          "type": "output",
+          "module": "MAX_MIN",
+          "width": 8,
+          "msb": "7",
+          "lsb": "0"
+        },
+        {
+          "id": "Max",
+          "type": "reg",
+          "module": "MAX_MIN",
+          "width": 8,
+          "msb": "7",
+          "lsb": "0"
+        },
+        {
+          "id": "Min",
+          "type": "output",
+          "module": "MAX_MIN",
+          "width": 8,
+          "msb": "7",
+          "lsb": "0"
+        },
+        {
+          "id": "Min",
+          "type": "reg",
+          "module": "MAX_MIN",
+          "width": 8,
+          "msb": "7",
+          "lsb": "0"
+        }
+      ],
+      "edges": [
+        {
+          "from": "pix_data",
+          "to": "Max",
+          "assign_type": "nonblocking",
+          "logic_type": "sequential",
+          "module": "MAX_MIN",
+          "sensitivity": [
+            "clk",
+            "reset"
+          ]
+        },
+        {
+          "from": "pix_data",
+          "to": "Min",
+          "assign_type": "nonblocking",
+          "logic_type": "sequential",
+          "module": "MAX_MIN",
+          "sensitivity": [
+            "clk",
+            "reset"
+          ]
+        },
+        {
+          "from": "pix_data",
+          "to": "Max",
+          "assign_type": "nonblocking",
+          "logic_type": "sequential",
+          "module": "MAX_MIN",
+          "sensitivity": [
+            "clk",
+            "reset"
+          ]
+        },
+        {
+          "from": "pix_data",
+          "to": "Min",
+          "assign_type": "nonblocking",
+          "logic_type": "sequential",
+          "module": "MAX_MIN",
+          "sensitivity": [
+            "clk",
+            "reset"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "FA",
+      "nodes": [
+        {
+          "id": "a",
+          "type": "input",
+          "module": "FA",
+          "width": 1,
+          "msb": null,
+          "lsb": null
+        },
+        {
+          "id": "b",
+          "type": "input",
+          "module": "FA",
+          "width": 1,
+          "msb": null,
+          "lsb": null
+        },
+        {
+          "id": "cin",
+          "type": "input",
+          "module": "FA",
+          "width": 1,
+          "msb": null,
+          "lsb": null
+        },
+        {
+          "id": "s",
+          "type": "output",
+          "module": "FA",
+          "width": 1,
+          "msb": null,
+          "lsb": null
+        },
+        {
+          "id": "cout",
+          "type": "output",
+          "module": "FA",
+          "width": 1,
+          "msb": null,
+          "lsb": null
+        },
+        {
+          "id": "s0",
+          "type": "wire",
+          "module": "FA",
+          "width": 1,
+          "msb": null,
+          "lsb": null
+        },
+        {
+          "id": "c0",
+          "type": "wire",
+          "module": "FA",
+          "width": 1,
+          "msb": null,
+          "lsb": null
+        },
+        {
+          "id": "c1",
+          "type": "wire",
+          "module": "FA",
+          "width": 1,
+          "msb": null,
+          "lsb": null
+        },
+        {
+          "id": "u0",
+          "type": "submodule",
+          "label": "u0 (HA)",
+          "module": "FA",
+          "target_module": "HA"
+        },
+        {
+          "id": "u1",
+          "type": "submodule",
+          "label": "u1 (HA)",
+          "module": "FA",
+          "target_module": "HA"
+        },
+        {
+          "id": "g0",
+          "type": "submodule",
+          "label": "g0 (or)",
+          "module": "FA",
+          "target_module": "or"
+        }
+      ],
+      "edges": []
+    },
+    {
+      "name": "THRES_GEN",
+      "nodes": [
+        {
+          "id": "Max",
+          "type": "input",
+          "module": "THRES_GEN",
+          "width": 8,
+          "msb": "7",
+          "lsb": "0"
+        },
+        {
+          "id": "Min",
+          "type": "input",
+          "module": "THRES_GEN",
+          "width": 8,
+          "msb": "7",
+          "lsb": "0"
+        },
+        {
+          "id": "clk",
+          "type": "input",
+          "module": "THRES_GEN",
+          "width": 1,
+          "msb": null,
+          "lsb": null
+        },
+        {
+          "id": "reset",
+          "type": "input",
+          "module": "THRES_GEN",
+          "width": 1,
+          "msb": null,
+          "lsb": null
+        },
+        {
+          "id": "en",
+          "type": "input",
+          "module": "THRES_GEN",
+          "width": 1,
+          "msb": null,
+          "lsb": null
+        },
+        {
+          "id": "Thres",
+          "type": "output",
+          "module": "THRES_GEN",
+          "width": 8,
+          "msb": "7",
+          "lsb": "0"
+        },
+        {
+          "id": "Thres",
+          "type": "reg",
+          "module": "THRES_GEN",
+          "width": 8,
+          "msb": "7",
+          "lsb": "0"
+        },
+        {
+          "id": "Cin",
+          "type": "wire",
+          "module": "THRES_GEN",
+          "width": 1,
+          "msb": null,
+          "lsb": null
+        },
+        {
+          "id": "C_out",
+          "type": "wire",
+          "module": "THRES_GEN",
+          "width": 1,
+          "msb": null,
+          "lsb": null
+        },
+        {
+          "id": "Cm",
+          "type": "wire",
+          "module": "THRES_GEN",
+          "width": 7,
+          "msb": "6",
+          "lsb": "0"
+        },
+        {
+          "id": "sum",
+          "type": "wire",
+          "module": "THRES_GEN",
+          "width": 8,
+          "msb": "7",
+          "lsb": "0"
+        },
+        {
+          "id": "f0",
+          "type": "submodule",
+          "label": "f0 (FA)",
+          "module": "THRES_GEN",
+          "target_module": "FA"
+        },
+        {
+          "id": "f1",
+          "type": "submodule",
+          "label": "f1 (FA)",
+          "module": "THRES_GEN",
+          "target_module": "FA"
+        },
+        {
+          "id": "f2",
+          "type": "submodule",
+          "label": "f2 (FA)",
+          "module": "THRES_GEN",
+          "target_module": "FA"
+        },
+        {
+          "id": "f3",
+          "type": "submodule",
+          "label": "f3 (FA)",
+          "module": "THRES_GEN",
+          "target_module": "FA"
+        },
+        {
+          "id": "f4",
+          "type": "submodule",
+          "label": "f4 (FA)",
+          "module": "THRES_GEN",
+          "target_module": "FA"
+        },
+        {
+          "id": "f5",
+          "type": "submodule",
+          "label": "f5 (FA)",
+          "module": "THRES_GEN",
+          "target_module": "FA"
+        },
+        {
+          "id": "f6",
+          "type": "submodule",
+          "label": "f6 (FA)",
+          "module": "THRES_GEN",
+          "target_module": "FA"
+        },
+        {
+          "id": "f7",
+          "type": "submodule",
+          "label": "f7 (FA)",
+          "module": "THRES_GEN",
+          "target_module": "FA"
+        }
+      ],
+      "edges": [
+        {
+          "from": "Max",
+          "to": "Cin",
+          "assign_type": "continuous",
+          "logic_type": "combinational",
+          "module": "THRES_GEN"
+        },
+        {
+          "from": "Min",
+          "to": "Cin",
+          "assign_type": "continuous",
+          "logic_type": "combinational",
+          "module": "THRES_GEN"
+        }
+      ]
+    },
+    {
+      "name": "ATE",
+      "nodes": [
+        {
+          "id": "clk",
+          "type": "input",
+          "module": "ATE",
+          "width": 1,
+          "msb": null,
+          "lsb": null
+        },
+        {
+          "id": "reset",
+          "type": "input",
+          "module": "ATE",
+          "width": 1,
+          "msb": null,
+          "lsb": null
+        },
+        {
+          "id": "pix_data",
+          "type": "input",
+          "module": "ATE",
+          "width": 8,
+          "msb": "7",
+          "lsb": "0"
+        },
+        {
+          "id": "type",
+          "type": "input",
+          "module": "ATE",
+          "width": 1,
+          "msb": null,
+          "lsb": null
+        },
+        {
+          "id": "bin",
+          "type": "output",
+          "module": "ATE",
+          "width": 1,
+          "msb": null,
+          "lsb": null
+        },
+        {
+          "id": "threshold",
+          "type": "output",
+          "module": "ATE",
+          "width": 8,
+          "msb": "7",
+          "lsb": "0"
+        },
+        {
+          "id": "threshold",
+          "type": "reg",
+          "module": "ATE",
+          "width": 8,
+          "msb": "7",
+          "lsb": "0"
+        },
+        {
+          "id": "bin",
+          "type": "reg",
+          "module": "ATE",
+          "width": 1,
+          "msb": null,
+          "lsb": null
+        },
+        {
+          "id": "col",
+          "type": "reg",
+          "module": "ATE",
+          "width": 7,
+          "msb": "6",
+          "lsb": "0"
+        },
+        {
+          "id": "Counter",
+          "type": "reg",
+          "module": "ATE",
+          "width": 6,
+          "msb": "5",
+          "lsb": "0"
+        },
+        {
+          "id": "block_count",
+          "type": "reg",
+          "module": "ATE",
+          "width": 13,
+          "msb": "12",
+          "lsb": "0"
+        },
+        {
+          "id": "en",
+          "type": "reg",
+          "module": "ATE",
+          "width": 1,
+          "msb": null,
+          "lsb": null
+        },
+        {
+          "id": "state",
+          "type": "reg",
+          "module": "ATE",
+          "width": 1,
+          "msb": null,
+          "lsb": null
+        },
+        {
+          "id": "cs",
+          "type": "reg",
+          "module": "ATE",
+          "width": 2,
+          "msb": "1",
+          "lsb": "0"
+        },
+        {
+          "id": "ns",
+          "type": "reg",
+          "module": "ATE",
+          "width": 2,
+          "msb": "1",
+          "lsb": "0"
+        },
+        {
+          "id": "_en",
+          "type": "wire",
+          "module": "ATE",
+          "width": 1,
+          "msb": null,
+          "lsb": null
+        },
+        {
+          "id": "_bin",
+          "type": "wire",
+          "module": "ATE",
+          "width": 1,
+          "msb": null,
+          "lsb": null
+        },
+        {
+          "id": "z",
+          "type": "wire",
+          "module": "ATE",
+          "width": 1,
+          "msb": null,
+          "lsb": null
+        },
+        {
+          "id": "_delay",
+          "type": "wire",
+          "module": "ATE",
+          "width": 1,
+          "msb": null,
+          "lsb": null
+        },
+        {
+          "id": "_col",
+          "type": "wire",
+          "module": "ATE",
+          "width": 7,
+          "msb": "6",
+          "lsb": "0"
+        },
+        {
+          "id": "c_bound",
+          "type": "wire",
+          "module": "ATE",
+          "width": 7,
+          "msb": "6",
+          "lsb": "0"
+        },
+        {
+          "id": "_Counter",
+          "type": "wire",
+          "module": "ATE",
+          "width": 6,
+          "msb": "5",
+          "lsb": "0"
+        },
+        {
+          "id": "_threshold",
+          "type": "wire",
+          "module": "ATE",
+          "width": 8,
+          "msb": "7",
+          "lsb": "0"
+        },
+        {
+          "id": "Thres",
+          "type": "wire",
+          "module": "ATE",
+          "width": 8,
+          "msb": "7",
+          "lsb": "0"
+        },
+        {
+          "id": "Max",
+          "type": "wire",
+          "module": "ATE",
+          "width": 8,
+          "msb": "7",
+          "lsb": "0"
+        },
+        {
+          "id": "Min",
+          "type": "wire",
+          "module": "ATE",
+          "width": 8,
+          "msb": "7",
+          "lsb": "0"
+        },
+        {
+          "id": "pix_out",
+          "type": "wire",
+          "module": "ATE",
+          "width": 8,
+          "msb": "7",
+          "lsb": "0"
+        },
+        {
+          "id": "F1",
+          "type": "submodule",
+          "label": "F1 (FIFO_64)",
+          "module": "ATE",
+          "target_module": "FIFO_64"
+        },
+        {
+          "id": "mm0",
+          "type": "submodule",
+          "label": "mm0 (MAX_MIN)",
+          "module": "ATE",
+          "target_module": "MAX_MIN"
+        },
+        {
+          "id": "th0",
+          "type": "submodule",
+          "label": "th0 (THRES_GEN)",
+          "module": "ATE",
+          "target_module": "THRES_GEN"
+        }
+      ],
+      "edges": [
+        {
+          "from": "Counter",
+          "to": "_Counter",
+          "assign_type": "continuous",
+          "logic_type": "combinational",
+          "module": "ATE"
+        },
+        {
+          "from": "Counter",
+          "to": "cnt63",
+          "assign_type": "continuous",
+          "logic_type": "combinational",
+          "module": "ATE"
+        },
+        {
+          "from": "col",
+          "to": "z",
+          "assign_type": "continuous",
+          "logic_type": "combinational",
+          "module": "ATE"
+        },
+        {
+          "from": "c_bound",
+          "to": "z",
+          "assign_type": "continuous",
+          "logic_type": "combinational",
+          "module": "ATE"
+        },
+        {
+          "from": "_Counter",
+          "to": "Counter",
+          "assign_type": "nonblocking",
+          "logic_type": "sequential",
+          "module": "ATE",
+          "sensitivity": [
+            "clk",
+            "reset"
+          ]
+        },
+        {
+          "from": "_state",
+          "to": "state",
+          "assign_type": "nonblocking",
+          "logic_type": "sequential",
+          "module": "ATE",
+          "sensitivity": [
+            "clk",
+            "reset"
+          ]
+        },
+        {
+          "from": "cnt63",
+          "to": "en",
+          "assign_type": "nonblocking",
+          "logic_type": "sequential",
+          "module": "ATE",
+          "sensitivity": [
+            "clk",
+            "reset"
+          ]
+        },
+        {
+          "from": "_col",
+          "to": "col",
+          "assign_type": "nonblocking",
+          "logic_type": "sequential",
+          "module": "ATE",
+          "sensitivity": [
+            "clk",
+            "reset"
+          ]
+        },
+        {
+          "from": "_threshold",
+          "to": "threshold",
+          "assign_type": "nonblocking",
+          "logic_type": "sequential",
+          "module": "ATE",
+          "sensitivity": [
+            "clk",
+            "reset"
+          ]
+        },
+        {
+          "from": "_bin",
+          "to": "bin",
+          "assign_type": "nonblocking",
+          "logic_type": "sequential",
+          "module": "ATE",
+          "sensitivity": [
+            "clk",
+            "reset"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "HA",
+      "nodes": [
+        {
+          "id": "a",
+          "type": "input",
+          "module": "HA",
+          "width": 1,
+          "msb": null,
+          "lsb": null
+        },
+        {
+          "id": "b",
+          "type": "input",
+          "module": "HA",
+          "width": 1,
+          "msb": null,
+          "lsb": null
+        },
+        {
+          "id": "s",
+          "type": "output",
+          "module": "HA",
+          "width": 1,
+          "msb": null,
+          "lsb": null
+        },
+        {
+          "id": "cout",
+          "type": "output",
+          "module": "HA",
+          "width": 1,
+          "msb": null,
+          "lsb": null
+        },
+        {
+          "id": "g0",
+          "type": "submodule",
+          "label": "g0 (and)",
+          "module": "HA",
+          "target_module": "and"
+        },
+        {
+          "id": "g1",
+          "type": "submodule",
+          "label": "g1 (xor)",
+          "module": "HA",
+          "target_module": "xor"
+        }
+      ],
+      "edges": []
+    }
+  ]
+}
