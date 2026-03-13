@@ -7,6 +7,10 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 
+// ===== 全域單例：確保多個 useBridge() 呼叫共用同一個 QWebChannel 連線 =====
+let _globalBridge = null;          // 已連線的 bridge 物件
+let _globalBridgePromise = null;   // 正在初始化的 Promise（防止重複建立連線）
+
 /**
  * 異步等待 QWebChannel 加載
  * 簡化版本：僅檢查 QWebChannel 是否存在，帶有「最後防線」邏輯
@@ -227,14 +231,31 @@ export function useBridge() {
     });
   }, []);
 
-  // 初始化 Bridge 连接
+  // 初始化 Bridge 连接（使用全域單例，多個元件共享同一連線）
   useEffect(() => {
+    // 若已有全域 bridge，直接使用
+    if (_globalBridge) {
+      console.log('[Bridge] Reusing existing global bridge connection');
+      bridgeRef.current = _globalBridge;
+      setBridge(_globalBridge);
+      setIsReady(true);
+      setConnectionStatus('connected');
+      connectSignals(_globalBridge);
+      return;
+    }
+
     console.log('[Bridge] Initializing HybridNode Bridge...');
     setConnectionStatus('connecting');
 
-    initializeBridge()
+    // 若已有正在初始化的 Promise，等待它完成（避免重複建立連線）
+    if (!_globalBridgePromise) {
+      _globalBridgePromise = initializeBridge();
+    }
+
+    _globalBridgePromise
       .then((bridgeObj) => {
         console.log('[Bridge] Connected successfully');
+        _globalBridge = bridgeObj;  // 快取到全域
         bridgeRef.current = bridgeObj;
         setBridge(bridgeObj);
         setIsReady(true);
@@ -251,6 +272,7 @@ export function useBridge() {
         console.error('   - qt.webChannelTransport available:',
           typeof qt !== 'undefined' && qt.webChannelTransport ? 'yes' : 'no');
 
+        _globalBridgePromise = null;  // 重置，允許下次重試
         setError(err.message);
         setIsReady(false);
         setConnectionStatus('failed');

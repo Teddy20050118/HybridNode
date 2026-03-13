@@ -78,8 +78,9 @@ class HardwareGraphAnalyzer:
                         print(f"警告：檔案包含解析錯誤，將轉換為警告節點 - {file_path}")
                         
                         # 建立虛擬警告節點
+                        sanitized_path = file_path.replace('/', '_').replace('\\', '_')
                         warning_node = {
-                            "id": f"ERROR_{file_path.replace('/', '_').replace('\\', '_')}",
+                            "id": f"ERROR_{sanitized_path}",
                             "type": "error",
                             "width": 1,
                             "module": "parse_error",
@@ -100,8 +101,9 @@ class HardwareGraphAnalyzer:
                     print(f"警告：檔案包含解析錯誤，將轉換為警告節點 - {file_path}")
                     
                     # 建立虛擬警告節點
+                    sanitized_path = file_path.replace('/', '_').replace('\\', '_')
                     warning_node = {
-                        "id": f"ERROR_{file_path.replace('/', '_').replace('\\', '_')}",
+                        "id": f"ERROR_{sanitized_path}",
                         "type": "error",
                         "width": 1,
                         "module": "parse_error",
@@ -401,8 +403,13 @@ class HardwareGraphAnalyzer:
     def detect_unused_variables(self):
         """
         Rule 5: 偵測宣告但未使用的變數
-        若一個節點既無輸入邊也無輸出邊（度數為 0），標記為 unused
-        排除 submodule 類型的節點（它們的連線可能在 port_map 中表達）
+        
+        重新定義「未使用」的標準：
+        - input 類型：僅被宣告但從未被後續運算讀取（out_degree == 0），表示此輸入沒有驅動任何電路
+        - output / wire / reg（中間訊號或輸出）：僅被宣告但從未被指派值（in_degree == 0），
+          表示此訊號在電路中沒有被驅動
+        - 此規則適用於所有模組
+        - 排除 submodule 類型節點（其連線透過 port_map 表達）
         """
         print("\n執行 Rule 5：偵測未使用的變數...")
         count = 0
@@ -418,8 +425,24 @@ class HardwareGraphAnalyzer:
             in_degree = self.graph.in_degree(node)
             out_degree = self.graph.out_degree(node)
             
-            if in_degree == 0 and out_degree == 0:
-                # 標記為 unused 風險
+            is_unused = False
+            
+            if node_type == "input":
+                # input 變數：應被後續運算使用（應有輸出邊）
+                # 若 out_degree == 0，表示此輸入宣告後從未被讀取
+                if out_degree == 0:
+                    is_unused = True
+            elif node_type in ("output", "wire", "reg"):
+                # output / wire / reg：應在電路中被指派值（應有輸入邊）
+                # 若 in_degree == 0，表示此訊號從未被驅動
+                if in_degree == 0:
+                    is_unused = True
+            else:
+                # 其他類型：沿用舊邏輯，完全孤立才標記
+                if in_degree == 0 and out_degree == 0:
+                    is_unused = True
+            
+            if is_unused:
                 current_risk = node_data.get("risk")
                 if current_risk:
                     node_data["risk"] = f"{current_risk}, unused"
@@ -427,7 +450,7 @@ class HardwareGraphAnalyzer:
                     node_data["risk"] = "unused"
                 count += 1
                 original_id = node_data.get("original_id", node)
-                print(f"  發現未使用的變數：{original_id} (模組: {node_data.get('module', '?')})")
+                print(f"  發現未使用的變數：{original_id} (類型: {node_type}, 模組: {node_data.get('module', '?')})")
         
         self.risk_stats["unused"] = count
         print(f"完成：共發現 {count} 個未使用的變數")

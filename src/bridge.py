@@ -9,7 +9,7 @@ import json
 import logging
 import numpy as np
 from pathlib import Path
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 import traceback
 
 from PyQt6.QtCore import QObject, pyqtSlot, pyqtSignal, QThread
@@ -24,6 +24,8 @@ from src.stage3_features import FeatureExtractor, to_pyg_data, preprocess_graph
 from src.stage3_labeler import apply_labels, save_labels_report
 from src.stage5_inference import BugPredictor
 from src.api import GraphDataConverter, load_graph_data
+from src.hierarchy_analyzer import HierarchyAnalyzer
+from src.hw_stage3_sim import HardwareSimulator
 
 # 配置日誌
 logging.basicConfig(level=logging.INFO)
@@ -299,10 +301,150 @@ class HybridBridge(QObject):
         self.parent_widget = parent
         self.current_worker = None
         self._graph_cache = None
+        self.last_hardware_verilog_path: str = ""
+        self.last_hardware_project_dir: str = ""
+        self.last_hardware_context: Dict[str, Any] = {}
         # [INFO] 儲存使用者最近一次選擇的專案目錄路徑
         # Reload 時 JS 會先查詢此屬性，再決定要呼叫 analyze_project 或 load_existing_graph
         self.current_project_path: str = ""
         logger.info("[INFO] HybridBridge 已初始化")
+
+    def _parse_dat_values(self, data_file: str, radix: str, width: Optional[int] = None) -> List[int]:
+        """Load numeric vectors from .dat/.map-like text files."""
+        values: List[int] = []
+        base = 16
+        if radix == "bin":
+            base = 2
+        elif radix == "dec":
+            base = 10
+
+        with open(data_file, "r", encoding="utf-8", errors="ignore") as f:
+            for line in f:
+                token = line.strip()
+                if not token or token.startswith("//") or token.startswith("#"):
+                    continue
+                token = token.replace("_", "")
+                if token.lower().startswith("0x"):
+                    num = int(token, 16)
+                elif token.lower().startswith("0b"):
+                    num = int(token, 2)
+                else:
+                    num = int(token, base)
+
+                if width and width > 0:
+                    mask = (1 << width) - 1
+                    num &= mask
+                values.append(num)
+
+        return values
+
+    def _normalize_signal_values(self, raw_values: List[str], width: Optional[int] = None) -> List[Optional[int]]:
+        """Convert VCD flat signal values (binary/x/z) into comparable integers."""
+        normalized: List[Optional[int]] = []
+        for value in raw_values:
+            if value is None:
+                normalized.append(None)
+                continue
+            s = str(value).strip().lower()
+            if not s or "x" in s or "z" in s:
+                normalized.append(None)
+                continue
+
+            if s.startswith("b"):
+                s = s[1:]
+
+            try:
+                parsed = int(s, 2) if set(s).issubset({"0", "1"}) else int(s)
+                if width and width > 0:
+                    mask = (1 << width) - 1
+                    parsed &= mask
+                normalized.append(parsed)
+            except Exception:
+                normalized.append(None)
+        return normalized
+
+    def _build_output_diagnostics(
+        self,
+        simulation_result: Dict[str, Any],
+        output_bindings: List[Dict[str, Any]]
+    ) -> Dict[str, Any]:
+        """Compare simulated outputs with expected .dat vectors and return mismatch diagnostics."""
+        signals = simulation_result.get("signals", {})
+        time_steps = simulation_result.get("time_steps", [])
+        checked_outputs: List[Dict[str, Any]] = []
+        total_checked = 0
+        total_mismatches = 0
+
+        for binding in output_bindings:
+            output_name = binding.get("output_name")
+            expected_file = binding.get("expected_data_file")
+            if not output_name:
+                continue
+
+            signal_values_raw = signals.get(output_name, [])
+            width = binding.get("width")
+            sim_values = self._normalize_signal_values(signal_values_raw, width)
+
+            output_report = {
+                "output_name": output_name,
+                "expected_data_file": expected_file,
+                "checked": False,
+                "samples_compared": 0,
+                "mismatch_count": 0,
+                "mismatches": []
+            }
+
+            if not expected_file:
+                checked_outputs.append(output_report)
+                continue
+
+            try:
+                radix = binding.get("radix", "hex")
+                expected_values = self._parse_dat_values(expected_file, radix, width)
+                compare_len = min(len(sim_values), len(expected_values))
+                mismatch_examples = []
+                mismatch_count = 0
+
+                for idx in range(compare_len):
+                    sv = sim_values[idx]
+                    ev = expected_values[idx]
+                    if sv is None:
+                        continue
+                    if sv != ev:
+                        mismatch_count += 1
+                        if len(mismatch_examples) < 20:
+                            mismatch_examples.append({
+                                "index": idx,
+                                "time_ns": time_steps[idx] if idx < len(time_steps) else None,
+                                "expected": ev,
+                                "actual": sv
+                            })
+
+                output_report.update({
+                    "checked": True,
+                    "samples_compared": compare_len,
+                    "mismatch_count": mismatch_count,
+                    "mismatches": mismatch_examples
+                })
+
+                total_checked += compare_len
+                total_mismatches += mismatch_count
+
+            except Exception as e:
+                output_report["error"] = str(e)
+
+            checked_outputs.append(output_report)
+
+        correctness = None
+        if total_checked > 0:
+            correctness = (total_mismatches == 0)
+
+        return {
+            "correct": correctness,
+            "total_samples_checked": total_checked,
+            "total_mismatches": total_mismatches,
+            "outputs": checked_outputs
+        }
     
     @pyqtSlot(result=str)
     def ping(self):
@@ -696,21 +838,45 @@ class HybridBridge(QObject):
             
             if result["success"]:
                 logger.info(f"[Bridge] [Hardware Pipeline] 執行成功")
+                self.last_hardware_verilog_path = str(Path(verilog_path).resolve())
+                self.last_hardware_project_dir = str(Path(verilog_path).resolve().parent)
                 
                 # 讀取生成的 React Flow 資料
                 import json
-                from pathlib import Path
+                
                 
                 reactflow_json_path = Path(result["stage2_output"])
                 
                 if reactflow_json_path.exists():
                     with open(reactflow_json_path, 'r', encoding='utf-8') as f:
                         reactflow_data = json.load(f)
+
+                    hierarchy_data: Dict[str, Any] = {}
+                    parsed_path = Path(result.get("stage1_output", ""))
+                    if parsed_path.exists():
+                        with open(parsed_path, 'r', encoding='utf-8') as pf:
+                            parsed_data = json.load(pf)
+                        analyzer = HierarchyAnalyzer(parsed_data)
+                        hierarchy_data = analyzer.generate_enhanced_output()
+
+                    project_data_files = []
+                    for ext in ("*.dat", "*.map"):
+                        for p in Path(self.last_hardware_project_dir).glob(ext):
+                            project_data_files.append(str(p.resolve()))
+
+                    self.last_hardware_context = {
+                        "verilog_path": self.last_hardware_verilog_path,
+                        "project_dir": self.last_hardware_project_dir,
+                        "hierarchy": hierarchy_data.get("hierarchy", {}),
+                        "module_ports": hierarchy_data.get("module_ports", {}),
+                        "project_data_files": sorted(project_data_files)
+                    }
                     
                     response = {
                         "success": True,
                         "message": result["message"],
                         "data": reactflow_data,
+                        "hardware_context": self.last_hardware_context,
                         "details": {
                             "stage1_output": result["stage1_output"],
                             "stage2_output": result["stage2_output"],
@@ -739,6 +905,142 @@ class HybridBridge(QObject):
             return safe_json_dumps({
                 "success": False,
                 "error": error_msg
+            })
+
+    @pyqtSlot(result=str)
+    def open_data_file_dialog(self) -> str:
+        """Open file dialog for selecting a single .dat/.map file independently."""
+        try:
+            default_dir = self.last_hardware_project_dir if self.last_hardware_project_dir else ""
+            file_path, _ = QFileDialog.getOpenFileName(
+                self.parent_widget,
+                "Select Data File",
+                default_dir,
+                "Data Files (*.dat *.map *.txt);;All Files (*.*)"
+            )
+
+            if file_path:
+                return safe_json_dumps({
+                    "success": True,
+                    "file_path": file_path,
+                    "cancelled": False
+                })
+
+            return safe_json_dumps({
+                "success": False,
+                "cancelled": True
+            })
+        except Exception as e:
+            return safe_json_dumps({
+                "success": False,
+                "error": f"Open data file dialog failed: {str(e)}"
+            })
+
+    @pyqtSlot(result=str)
+    def open_testbench_file_dialog(self) -> str:
+        """Open file dialog for selecting user-provided testbench file."""
+        try:
+            default_dir = self.last_hardware_project_dir if self.last_hardware_project_dir else ""
+            file_path, _ = QFileDialog.getOpenFileName(
+                self.parent_widget,
+                "Select Testbench File",
+                default_dir,
+                "Testbench Files (*.v *.sv *.vh);;All Files (*.*)"
+            )
+
+            if file_path:
+                return safe_json_dumps({
+                    "success": True,
+                    "file_path": file_path,
+                    "cancelled": False
+                })
+
+            return safe_json_dumps({
+                "success": False,
+                "cancelled": True
+            })
+        except Exception as e:
+            return safe_json_dumps({
+                "success": False,
+                "error": f"Open testbench dialog failed: {str(e)}"
+            })
+
+    @pyqtSlot(str, result=str)
+    def run_hardware_validation(self, request_json_str: str) -> str:
+        """
+        Run simulation against user-selected testbench and validate outputs with .dat mappings.
+        """
+        try:
+            request = json.loads(request_json_str)
+            functional_description = request.get("functional_description", "")
+            verilog_path = request.get("verilog_file") or self.last_hardware_verilog_path
+            testbench_path = request.get("testbench_file")
+            top_module = request.get("top_module")
+            selected_inputs = request.get("selected_inputs", [])
+            selected_outputs = request.get("selected_outputs", [])
+            input_bindings = request.get("input_bindings", [])
+            output_bindings = request.get("output_bindings", [])
+
+            if not verilog_path or not Path(verilog_path).exists():
+                return safe_json_dumps({
+                    "success": False,
+                    "error": "Verilog source file is missing or invalid. Please import hardware again."
+                })
+
+            if not testbench_path or not Path(testbench_path).exists():
+                return safe_json_dumps({
+                    "success": False,
+                    "error": "Testbench file is required and must exist."
+                })
+
+            simulator = HardwareSimulator(work_dir="simulation")
+            simulation_output = Path("output") / "simulation_data.json"
+            simulation_result = simulator.run_full_simulation(
+                source_files=[str(verilog_path), str(testbench_path)],
+                target_module=top_module,
+                output_json=str(simulation_output)
+            )
+
+            if "error" in simulation_result:
+                return safe_json_dumps({
+                    "success": False,
+                    "error": simulation_result["error"]
+                })
+
+            diagnostics = self._build_output_diagnostics(simulation_result, output_bindings)
+            ai_summary = {
+                "functional_description": functional_description,
+                "selected_inputs": selected_inputs,
+                "selected_outputs": selected_outputs,
+                "input_binding_count": len(input_bindings),
+                "output_binding_count": len(output_bindings),
+                "simulation_steps": len(simulation_result.get("time_steps", []))
+            }
+
+            return safe_json_dumps({
+                "success": True,
+                "message": "Simulation and validation completed.",
+                "simulation_path": str(simulation_output),
+                "simulation_result": {
+                    "time_steps": simulation_result.get("time_steps", []),
+                    "signals": simulation_result.get("signals", {}),
+                    "metadata": simulation_result.get("metadata", {})
+                },
+                "diagnostics": diagnostics,
+                "analysis": ai_summary
+            })
+
+        except json.JSONDecodeError as e:
+            return safe_json_dumps({
+                "success": False,
+                "error": f"Invalid request JSON: {str(e)}"
+            })
+        except Exception as e:
+            logger.error(f"[Bridge] [Hardware Validation] {str(e)}")
+            logger.error(traceback.format_exc())
+            return safe_json_dumps({
+                "success": False,
+                "error": f"Hardware validation failed: {str(e)}"
             })
             
         except Exception as e:
@@ -789,6 +1091,119 @@ class HybridBridge(QObject):
         except Exception as e:
             error_msg = f"開啟檔案對話框失敗: {str(e)}"
             logger.error(f"[Bridge] {error_msg}")
+            return safe_json_dumps({
+                "success": False,
+                "error": error_msg
+            })
+
+    @pyqtSlot(str, result=str)
+    def run_cpp_risk_analysis(self, config_json_str: str) -> str:
+        """
+        執行 C++ 軟體模式 AI 風險預測分析
+
+        前端傳入 JSON 設定：
+        {
+            "graph_path": "output/graph_data.pt"  (可選，預設值)
+        }
+
+        Returns:
+            JSON 字串，包含風險分析結果列表（由高至低排序）
+        """
+        logger.info("[Bridge] [C++ AI Risk] 開始執行 C++ AI 風險預測分析")
+
+        try:
+            config = json.loads(config_json_str)
+            graph_path = config.get("graph_path", "output/graph_data.pt")
+
+            from src.cpp_ai_risk_analyzer import CppAIRiskAnalyzer
+
+            analyzer = CppAIRiskAnalyzer()
+
+            loaded = analyzer.load_graph_data(graph_path)
+            if not loaded:
+                return safe_json_dumps({
+                    "success": False,
+                    "error": "無法載入圖資料，請先開啟 C++ 專案進行分析"
+                })
+
+            results = analyzer.analyze()
+            summary = analyzer.get_summary()
+
+            logger.info(f"[Bridge] [C++ AI Risk] 分析完成 - 共 {len(results)} 個函式")
+
+            return safe_json_dumps({
+                "success": True,
+                "results": results,
+                "summary": summary
+            })
+
+        except Exception as e:
+            error_msg = f"C++ AI 風險分析失敗: {str(e)}"
+            logger.error(f"[Bridge] [C++ AI Risk] {error_msg}")
+            import traceback
+            logger.error(traceback.format_exc())
+            return safe_json_dumps({
+                "success": False,
+                "error": error_msg
+            })
+
+    @pyqtSlot(str, result=str)
+    def run_ai_risk_analysis(self, config_json_str: str) -> str:
+        """
+        執行 AI 風險預測分析
+
+        前端傳入 JSON 設定：
+        {
+            "functional_description": "使用者對電路功能的描述",
+            "reactflow_json_path": "frontend/src/data/reactflow_data.json"  (可選)
+        }
+
+        Returns:
+            JSON 字串，包含風險分析結果列表（由高至低排序）
+        """
+        logger.info("[Bridge] [AI Risk] 開始執行 AI 風險預測分析")
+
+        try:
+            config = json.loads(config_json_str)
+            functional_desc = config.get("functional_description", "")
+            reactflow_path = config.get(
+                "reactflow_json_path",
+                "frontend/src/data/reactflow_data.json"
+            )
+
+            from src.hw_ai_risk_analyzer import HardwareAIRiskAnalyzer
+
+            analyzer = HardwareAIRiskAnalyzer()
+
+            # 嘗試載入資料
+            loaded = analyzer.load_data(reactflow_json_path=reactflow_path)
+            if not loaded:
+                # 嘗試 parsed_data
+                parsed_path = "output/parsed_data.json"
+                loaded = analyzer.load_data(parsed_json_path=parsed_path)
+
+            if not loaded:
+                return safe_json_dumps({
+                    "success": False,
+                    "error": "無法載入電路資料，請先執行 Verilog 分析流水線"
+                })
+
+            results = analyzer.analyze(functional_desc)
+            summary = analyzer.get_summary()
+
+            logger.info(f"[Bridge] [AI Risk] 分析完成 - 共 {len(results)} 條路徑")
+
+            return safe_json_dumps({
+                "success": True,
+                "results": results,
+                "summary": summary
+            })
+
+        except Exception as e:
+            error_msg = f"AI 風險分析失敗: {str(e)}"
+            logger.error(f"[Bridge] [AI Risk] {error_msg}")
+            import traceback
+            logger.error(traceback.format_exc())
             return safe_json_dumps({
                 "success": False,
                 "error": error_msg

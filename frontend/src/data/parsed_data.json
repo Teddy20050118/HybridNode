@@ -1,5 +1,5 @@
 {
-  "file": "examples\\sample.v",
+  "file": "C:\\Users\\eric7\\OneDrive\\Desktop\\ATE.v",
   "nodes": [
     {
       "id": "clk",
@@ -1012,196 +1012,6 @@
   ],
   "modules": [
     {
-      "name": "FIFO_64",
-      "nodes": [
-        {
-          "id": "pix_data",
-          "type": "input",
-          "module": "FIFO_64",
-          "width": 1,
-          "msb": "data_width",
-          "lsb": "0"
-        },
-        {
-          "id": "clk",
-          "type": "input",
-          "module": "FIFO_64",
-          "width": 1,
-          "msb": null,
-          "lsb": null
-        },
-        {
-          "id": "Addr",
-          "type": "input",
-          "module": "FIFO_64",
-          "width": 6,
-          "msb": "5",
-          "lsb": "0"
-        },
-        {
-          "id": "pix_out",
-          "type": "output",
-          "module": "FIFO_64",
-          "width": 1,
-          "msb": "data_width",
-          "lsb": "0"
-        },
-        {
-          "id": "pix_out",
-          "type": "reg",
-          "module": "FIFO_64",
-          "width": 1,
-          "msb": "data_width",
-          "lsb": "0"
-        },
-        {
-          "id": "fifo",
-          "type": "reg",
-          "module": "FIFO_64",
-          "width": 1,
-          "msb": "data_width",
-          "lsb": "0"
-        }
-      ],
-      "edges": [
-        {
-          "from": "pix_data",
-          "to": "fifo",
-          "assign_type": "nonblocking",
-          "logic_type": "sequential",
-          "module": "FIFO_64",
-          "sensitivity": [
-            "clk"
-          ]
-        },
-        {
-          "from": "fifo",
-          "to": "pix_out",
-          "assign_type": "nonblocking",
-          "logic_type": "sequential",
-          "module": "FIFO_64",
-          "sensitivity": [
-            "clk"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "MAX_MIN",
-      "nodes": [
-        {
-          "id": "pix_data",
-          "type": "input",
-          "module": "MAX_MIN",
-          "width": 8,
-          "msb": "7",
-          "lsb": "0"
-        },
-        {
-          "id": "clk",
-          "type": "input",
-          "module": "MAX_MIN",
-          "width": 1,
-          "msb": null,
-          "lsb": null
-        },
-        {
-          "id": "reset",
-          "type": "input",
-          "module": "MAX_MIN",
-          "width": 1,
-          "msb": null,
-          "lsb": null
-        },
-        {
-          "id": "cnt",
-          "type": "input",
-          "module": "MAX_MIN",
-          "width": 6,
-          "msb": "5",
-          "lsb": "0"
-        },
-        {
-          "id": "Max",
-          "type": "output",
-          "module": "MAX_MIN",
-          "width": 8,
-          "msb": "7",
-          "lsb": "0"
-        },
-        {
-          "id": "Max",
-          "type": "reg",
-          "module": "MAX_MIN",
-          "width": 8,
-          "msb": "7",
-          "lsb": "0"
-        },
-        {
-          "id": "Min",
-          "type": "output",
-          "module": "MAX_MIN",
-          "width": 8,
-          "msb": "7",
-          "lsb": "0"
-        },
-        {
-          "id": "Min",
-          "type": "reg",
-          "module": "MAX_MIN",
-          "width": 8,
-          "msb": "7",
-          "lsb": "0"
-        }
-      ],
-      "edges": [
-        {
-          "from": "pix_data",
-          "to": "Max",
-          "assign_type": "nonblocking",
-          "logic_type": "sequential",
-          "module": "MAX_MIN",
-          "sensitivity": [
-            "clk",
-            "reset"
-          ]
-        },
-        {
-          "from": "pix_data",
-          "to": "Min",
-          "assign_type": "nonblocking",
-          "logic_type": "sequential",
-          "module": "MAX_MIN",
-          "sensitivity": [
-            "clk",
-            "reset"
-          ]
-        },
-        {
-          "from": "pix_data",
-          "to": "Max",
-          "assign_type": "nonblocking",
-          "logic_type": "sequential",
-          "module": "MAX_MIN",
-          "sensitivity": [
-            "clk",
-            "reset"
-          ]
-        },
-        {
-          "from": "pix_data",
-          "to": "Min",
-          "assign_type": "nonblocking",
-          "logic_type": "sequential",
-          "module": "MAX_MIN",
-          "sensitivity": [
-            "clk",
-            "reset"
-          ]
-        }
-      ]
-    },
-    {
       "name": "FA",
       "nodes": [
         {
@@ -1288,6 +1098,58 @@
           "label": "g0 (or)",
           "module": "FA",
           "target_module": "or"
+        }
+      ],
+      "edges": []
+    },
+    {
+      "name": "HA",
+      "nodes": [
+        {
+          "id": "a",
+          "type": "input",
+          "module": "HA",
+          "width": 1,
+          "msb": null,
+          "lsb": null
+        },
+        {
+          "id": "b",
+          "type": "input",
+          "module": "HA",
+          "width": 1,
+          "msb": null,
+          "lsb": null
+        },
+        {
+          "id": "s",
+          "type": "output",
+          "module": "HA",
+          "width": 1,
+          "msb": null,
+          "lsb": null
+        },
+        {
+          "id": "cout",
+          "type": "output",
+          "module": "HA",
+          "width": 1,
+          "msb": null,
+          "lsb": null
+        },
+        {
+          "id": "g0",
+          "type": "submodule",
+          "label": "g0 (and)",
+          "module": "HA",
+          "target_module": "and"
+        },
+        {
+          "id": "g1",
+          "type": "submodule",
+          "label": "g1 (xor)",
+          "module": "HA",
+          "target_module": "xor"
         }
       ],
       "edges": []
@@ -1454,6 +1316,81 @@
           "assign_type": "continuous",
           "logic_type": "combinational",
           "module": "THRES_GEN"
+        }
+      ]
+    },
+    {
+      "name": "FIFO_64",
+      "nodes": [
+        {
+          "id": "pix_data",
+          "type": "input",
+          "module": "FIFO_64",
+          "width": 1,
+          "msb": "data_width",
+          "lsb": "0"
+        },
+        {
+          "id": "clk",
+          "type": "input",
+          "module": "FIFO_64",
+          "width": 1,
+          "msb": null,
+          "lsb": null
+        },
+        {
+          "id": "Addr",
+          "type": "input",
+          "module": "FIFO_64",
+          "width": 6,
+          "msb": "5",
+          "lsb": "0"
+        },
+        {
+          "id": "pix_out",
+          "type": "output",
+          "module": "FIFO_64",
+          "width": 1,
+          "msb": "data_width",
+          "lsb": "0"
+        },
+        {
+          "id": "pix_out",
+          "type": "reg",
+          "module": "FIFO_64",
+          "width": 1,
+          "msb": "data_width",
+          "lsb": "0"
+        },
+        {
+          "id": "fifo",
+          "type": "reg",
+          "module": "FIFO_64",
+          "width": 1,
+          "msb": "data_width",
+          "lsb": "0"
+        }
+      ],
+      "edges": [
+        {
+          "from": "pix_data",
+          "to": "fifo",
+          "assign_type": "nonblocking",
+          "logic_type": "sequential",
+          "module": "FIFO_64",
+          "sensitivity": [
+            "clk"
+          ]
+        },
+        {
+          "from": "fifo",
+          "to": "pix_out",
+          "assign_type": "nonblocking",
+          "logic_type": "sequential",
+          "module": "FIFO_64",
+          "sensitivity": [
+            "clk"
+          ]
         }
       ]
     },
@@ -1796,56 +1733,119 @@
       ]
     },
     {
-      "name": "HA",
+      "name": "MAX_MIN",
       "nodes": [
         {
-          "id": "a",
+          "id": "pix_data",
           "type": "input",
-          "module": "HA",
-          "width": 1,
-          "msb": null,
-          "lsb": null
+          "module": "MAX_MIN",
+          "width": 8,
+          "msb": "7",
+          "lsb": "0"
         },
         {
-          "id": "b",
+          "id": "clk",
           "type": "input",
-          "module": "HA",
+          "module": "MAX_MIN",
           "width": 1,
           "msb": null,
           "lsb": null
         },
         {
-          "id": "s",
+          "id": "reset",
+          "type": "input",
+          "module": "MAX_MIN",
+          "width": 1,
+          "msb": null,
+          "lsb": null
+        },
+        {
+          "id": "cnt",
+          "type": "input",
+          "module": "MAX_MIN",
+          "width": 6,
+          "msb": "5",
+          "lsb": "0"
+        },
+        {
+          "id": "Max",
           "type": "output",
-          "module": "HA",
-          "width": 1,
-          "msb": null,
-          "lsb": null
+          "module": "MAX_MIN",
+          "width": 8,
+          "msb": "7",
+          "lsb": "0"
         },
         {
-          "id": "cout",
+          "id": "Max",
+          "type": "reg",
+          "module": "MAX_MIN",
+          "width": 8,
+          "msb": "7",
+          "lsb": "0"
+        },
+        {
+          "id": "Min",
           "type": "output",
-          "module": "HA",
-          "width": 1,
-          "msb": null,
-          "lsb": null
+          "module": "MAX_MIN",
+          "width": 8,
+          "msb": "7",
+          "lsb": "0"
         },
         {
-          "id": "g0",
-          "type": "submodule",
-          "label": "g0 (and)",
-          "module": "HA",
-          "target_module": "and"
-        },
-        {
-          "id": "g1",
-          "type": "submodule",
-          "label": "g1 (xor)",
-          "module": "HA",
-          "target_module": "xor"
+          "id": "Min",
+          "type": "reg",
+          "module": "MAX_MIN",
+          "width": 8,
+          "msb": "7",
+          "lsb": "0"
         }
       ],
-      "edges": []
+      "edges": [
+        {
+          "from": "pix_data",
+          "to": "Max",
+          "assign_type": "nonblocking",
+          "logic_type": "sequential",
+          "module": "MAX_MIN",
+          "sensitivity": [
+            "clk",
+            "reset"
+          ]
+        },
+        {
+          "from": "pix_data",
+          "to": "Min",
+          "assign_type": "nonblocking",
+          "logic_type": "sequential",
+          "module": "MAX_MIN",
+          "sensitivity": [
+            "clk",
+            "reset"
+          ]
+        },
+        {
+          "from": "pix_data",
+          "to": "Max",
+          "assign_type": "nonblocking",
+          "logic_type": "sequential",
+          "module": "MAX_MIN",
+          "sensitivity": [
+            "clk",
+            "reset"
+          ]
+        },
+        {
+          "from": "pix_data",
+          "to": "Min",
+          "assign_type": "nonblocking",
+          "logic_type": "sequential",
+          "module": "MAX_MIN",
+          "sensitivity": [
+            "clk",
+            "reset"
+          ]
+        }
+      ]
     }
   ]
 }

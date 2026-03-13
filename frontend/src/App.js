@@ -11,6 +11,7 @@ import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import StatsPanel from './components/StatsPanel';
 import HardwareGraph from './components/HardwareGraph'; // [新增] 引入硬體圖表組件
+import SoftwareRiskPanel from './components/SoftwareRiskPanel'; // [新增] C++ AI 風險預測面板
 import { useBridge } from './hooks/useBridge';
 
 // --- 樣式組件 ---
@@ -88,6 +89,29 @@ const EmptyState = styled.div`
 `;
 
 // 修改模式切換按鈕樣式，移到右下角避免被 Header 蓋住
+const AIRiskBtn = styled.button`
+  position: absolute;
+  bottom: 30px;
+  right: 200px;
+  z-index: 10000;
+  background: linear-gradient(135deg, #58a6ff 0%, #1f6feb 100%);
+  color: white;
+  border: 1px solid rgba(240, 246, 252, 0.1);
+  padding: 12px 24px;
+  border-radius: 50px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  transition: all 0.2s;
+  
+  &:hover {
+    background: linear-gradient(135deg, #79b8ff 0%, #388bfd 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+  }
+`;
+
 const ModeToggleBtn = styled.button`
   position: absolute;
   bottom: 30px; /* 從 top 改成 bottom */
@@ -117,6 +141,7 @@ function App() {
 
   // 使用 Bridge Hook
   const {
+    bridge,
     isReady,
     graphData: bridgeGraphData,
     stats: bridgeStats,
@@ -135,6 +160,8 @@ function App() {
   const [showAllNodes, setShowAllNodes] = useState(false);
   const [highlightedNodes, setHighlightedNodes] = useState(new Set());
   const [filteredGraphData, setFilteredGraphData] = useState(null);
+  const [isRiskPanelOpen, setIsRiskPanelOpen] = useState(false); // [新增] C++ AI 風險面板狀態
+  const [riskHighlightedNodes, setRiskHighlightedNodes] = useState(new Set()); // [新增] 風險高亮節點
 
   const graphData = filteredGraphData || bridgeGraphData;
   const stats = bridgeStats;
@@ -212,6 +239,21 @@ function App() {
 
   const handleReload = useCallback(() => reloadProject(), [reloadProject]);
   const handleOpenProject = useCallback(() => openDirectoryDialog(), [openDirectoryDialog]);
+
+  // [新增] C++ AI 風險分析 - 選中函式時高亮節點
+  const handleSelectRiskFunction = useCallback((nodeIds, item) => {
+    setRiskHighlightedNodes(new Set(nodeIds));
+    // 同時在圖上選中該節點
+    if (item && item.node_id && graphData) {
+      const node = graphData.nodes.find(n => n.id === item.node_id);
+      if (node) handleNodeClick(node);
+    }
+  }, [graphData, handleNodeClick]);
+
+  const handleCloseRiskPanel = useCallback(() => {
+    setIsRiskPanelOpen(false);
+    setRiskHighlightedNodes(new Set());
+  }, []);
 
   useEffect(() => {
     if (isReady && !graphData) {
@@ -293,9 +335,23 @@ function App() {
                 <GraphComponent
                   data={graphData}
                   selectedNode={selectedNode}
-                  highlightedNodes={highlightedNodes}
+                  highlightedNodes={new Set([...highlightedNodes, ...riskHighlightedNodes])}
                   onNodeClick={handleNodeClick}
                 />
+                {/* [新增] AI 風險分析按鈕 */}
+                {!isRiskPanelOpen && (
+                  <AIRiskBtn onClick={() => setIsRiskPanelOpen(true)}>
+                    AI 風險分析
+                  </AIRiskBtn>
+                )}
+                {/* [新增] AI 風險分析面板 */}
+                {isRiskPanelOpen && (
+                  <SoftwareRiskPanel
+                    bridge={bridge}
+                    onSelectFunction={handleSelectRiskFunction}
+                    onClose={handleCloseRiskPanel}
+                  />
+                )}
               </GraphContainer>
               <Sidebar node={selectedNode} onClose={() => setSelectedNode(null)} />
             </MainContent>

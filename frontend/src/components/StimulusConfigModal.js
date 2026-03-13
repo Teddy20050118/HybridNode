@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 // --- Styled Components (確保沒有 Emoji，且符合深色主題) ---
@@ -120,146 +120,338 @@ const Button = styled.button`
 `;
 
 // --- Main Component ---
-const StimulusConfigModal = ({ isOpen, onClose, hierarchyData, onGenerate }) => {
-  // 表單狀態
-  const [topModule, setTopModule] = useState('');
-  const [clockConfig, setClockConfig] = useState({ signal_name: 'clk', period_ns: 10 });
-  const [resetConfig, setResetConfig] = useState({ signal_name: 'reset', active_high: true, duration_ns: 20 });
-  const [bindings, setBindings] = useState([]);
-  const [outputs, setOutputs] = useState([]);
-  const [simCycles, setSimCycles] = useState(4096);
+const Helper = styled.div`
+  color: #999;
+  font-size: 12px;
+  margin-top: 4px;
+`;
 
-  // 初始化資料（當 hierarchyData 傳入時解析）
-  useEffect(() => {
-    if (!isOpen || !hierarchyData || !hierarchyData.hierarchy) return;
+const ErrorText = styled.div`
+  color: #ff6b6b;
+  font-size: 13px;
+  margin-top: 10px;
+`;
 
-    const top = hierarchyData.hierarchy.top_module;
-    setTopModule(top);
+const StepBox = styled.div`
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 14px;
+  background: #232323;
+`;
 
-    const ports = hierarchyData.module_ports[top];
-    if (ports) {
-      // 處理 Inputs
-      const initialBindings = ports.inputs
-        .filter(inp => inp.name !== 'clk' && inp.name !== 'reset') // 排除預設的 clk/reset
-        .map(inp => ({
-          input_name: inp.name,
-          width: inp.width,
-          data_file: `${inp.name}_data.dat`, // 預設檔名
-          radix: inp.width > 1 ? 'hex' : 'bin',
-          description: `${inp.width}-bit 輸入`
-        }));
-      setBindings(initialBindings);
-      
-      // 處理 Outputs
-      setOutputs(ports.outputs.map(out => ({
-        name: out.name,
-        width: out.width,
-        description: `${out.width}-bit 輸出`
-      })));
+const TextArea = styled.textarea`
+  background: #111;
+  border: 1px solid #444;
+  color: #fff;
+  padding: 8px 10px;
+  border-radius: 4px;
+  width: 100%;
+  min-height: 90px;
+  resize: vertical;
+  font-family: inherit;
+  &:focus { outline: none; border-color: #66ccff; }
+`;
+
+const Checkbox = styled.input`
+  margin-right: 8px;
+`;
+
+const SmallButton = styled.button`
+  background: #30363d;
+  color: #fff;
+  border: 1px solid #444;
+  padding: 6px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: inherit;
+`;
+
+const StimulusConfigModal = ({
+  isOpen,
+  onClose,
+  hardwareContext,
+  bridge,
+  onAnalyze,
+  onImportVerilog,
+  isImportingVerilog
+}) => {
+  const [functionalDescription, setFunctionalDescription] = useState('');
+  const [selectedInputs, setSelectedInputs] = useState({});
+  const [selectedOutputs, setSelectedOutputs] = useState({});
+  const [inputBindings, setInputBindings] = useState({});
+  const [outputBindings, setOutputBindings] = useState({});
+  const [testbenchPath, setTestbenchPath] = useState('');
+  const [localError, setLocalError] = useState('');
+
+  const topModule = useMemo(() => {
+    return hardwareContext?.hierarchy?.top_module || '';
+  }, [hardwareContext]);
+
+  const ports = useMemo(() => {
+    if (!topModule || !hardwareContext?.module_ports) {
+      return { inputs: [], outputs: [] };
     }
-  }, [isOpen, hierarchyData]);
+    return hardwareContext.module_ports[topModule] || { inputs: [], outputs: [] };
+  }, [hardwareContext, topModule]);
 
   if (!isOpen) return null;
 
-  // 處理綁定資料更新
-  const handleBindingChange = (index, field, value) => {
-    const newBindings = [...bindings];
-    newBindings[index][field] = value;
-    setBindings(newBindings);
+  const toggleSelection = (kind, name) => {
+    if (kind === 'input') {
+      setSelectedInputs(prev => ({ ...prev, [name]: !prev[name] }));
+    } else {
+      setSelectedOutputs(prev => ({ ...prev, [name]: !prev[name] }));
+    }
   };
 
-  // 提交生成
-  const handleSubmit = () => {
-    const configData = {
-      top_module: topModule,
-      clock: { ...clockConfig, initial_value: 0 },
-      reset: resetConfig,
-      stimulus_bindings: bindings,
-      outputs: outputs,
-      simulation: {
-        test_cycles: parseInt(simCycles),
-        vcd_output: `${topModule}_auto_sim.vcd`,
-        display_interval: 512
-      },
-      comments: {
-        purpose: "Auto-generated Testbench Config from UI",
-        date: new Date().toISOString().split('T')[0]
+  const updateBinding = (kind, name, field, value) => {
+    if (kind === 'input') {
+      setInputBindings(prev => ({
+        ...prev,
+        [name]: { ...(prev[name] || {}), [field]: value }
+      }));
+    } else {
+      setOutputBindings(prev => ({
+        ...prev,
+        [name]: { ...(prev[name] || {}), [field]: value }
+      }));
+    }
+  };
+
+  const importVerilog = async () => {
+    if (!onImportVerilog) {
+      setLocalError('Verilog import handler is not available.');
+      return;
+    }
+    setLocalError('');
+    const ok = await onImportVerilog();
+    if (!ok) {
+      setLocalError('Verilog import failed. Please check parser logs.');
+    }
+  };
+
+  const selectIndependentDataFile = (kind, name) => {
+    if (!bridge?.open_data_file_dialog) {
+      setLocalError('Bridge is not ready for data-file selection.');
+      return;
+    }
+
+    bridge.open_data_file_dialog((resultStr) => {
+      try {
+        const res = JSON.parse(resultStr);
+        if (res.success && res.file_path) {
+          if (kind === 'input') {
+            updateBinding('input', name, 'data_file', res.file_path);
+          } else {
+            updateBinding('output', name, 'expected_data_file', res.file_path);
+          }
+        }
+      } catch (err) {
+        setLocalError(`Failed to parse data file dialog result: ${err.message}`);
       }
+    });
+  };
+
+  const selectTestbench = () => {
+    if (!bridge?.open_testbench_file_dialog) {
+      setLocalError('Bridge is not ready for testbench selection.');
+      return;
+    }
+
+    bridge.open_testbench_file_dialog((resultStr) => {
+      try {
+        const res = JSON.parse(resultStr);
+        if (res.success && res.file_path) {
+          setTestbenchPath(res.file_path);
+          setLocalError('');
+        }
+      } catch (err) {
+        setLocalError(`Failed to parse testbench dialog result: ${err.message}`);
+      }
+    });
+  };
+
+  const handleSubmit = () => {
+    setLocalError('');
+
+    if (!functionalDescription.trim()) {
+      setLocalError('Please provide a circuit functional description first.');
+      return;
+    }
+    if (!testbenchPath) {
+      setLocalError('Please select a testbench file before analysis.');
+      return;
+    }
+
+    const selectedInputList = ports.inputs
+      .filter(i => selectedInputs[i.name])
+      .map(i => i.name);
+    const selectedOutputList = ports.outputs
+      .filter(o => selectedOutputs[o.name])
+      .map(o => o.name);
+
+    if (selectedInputList.length === 0 && selectedOutputList.length === 0) {
+      setLocalError('Please select at least one input or output signal.');
+      return;
+    }
+
+    const payload = {
+      functional_description: functionalDescription,
+      verilog_file: hardwareContext?.verilog_path || '',
+      top_module: topModule,
+      testbench_file: testbenchPath,
+      selected_inputs: selectedInputList,
+      selected_outputs: selectedOutputList,
+      input_bindings: ports.inputs
+        .filter(i => selectedInputs[i.name])
+        .map(i => ({
+          input_name: i.name,
+          width: i.width,
+          data_file: inputBindings[i.name]?.data_file || '',
+          radix: inputBindings[i.name]?.radix || (i.width > 1 ? 'hex' : 'bin')
+        })),
+      output_bindings: ports.outputs
+        .filter(o => selectedOutputs[o.name])
+        .map(o => ({
+          output_name: o.name,
+          width: o.width,
+          expected_data_file: outputBindings[o.name]?.expected_data_file || '',
+          radix: outputBindings[o.name]?.radix || (o.width > 1 ? 'hex' : 'bin')
+        }))
     };
-    onGenerate(configData);
+
+    onAnalyze(payload);
   };
 
   return (
     <ModalOverlay>
       <ModalContainer>
         <Header>
-          <Title>測資自動綁定設定 (Stimulus Config)</Title>
-          <Subtitle>頂層模組: {topModule || '未知'}</Subtitle>
+          <Title>Hardware Validation Workflow</Title>
+          <Subtitle>Top module: {topModule || 'N/A'}</Subtitle>
         </Header>
         
         <Content>
-          <SectionTitle>時脈與重置 (Clock & Reset)</SectionTitle>
-          <InputRow>
-            <Label>Clock 週期 (ns)</Label>
-            <StyledInput 
-              type="number" 
-              value={clockConfig.period_ns} 
-              onChange={e => setClockConfig({...clockConfig, period_ns: parseInt(e.target.value)})} 
+          <SectionTitle>Step 1: Circuit Functional Description</SectionTitle>
+          <StepBox>
+            <TextArea
+              placeholder="Describe the intended circuit behavior and validation expectation."
+              value={functionalDescription}
+              onChange={(e) => setFunctionalDescription(e.target.value)}
             />
-          </InputRow>
-          <InputRow>
-            <Label>Reset 維持 (ns)</Label>
-            <StyledInput 
-              type="number" 
-              value={resetConfig.duration_ns} 
-              onChange={e => setResetConfig({...resetConfig, duration_ns: parseInt(e.target.value)})} 
-            />
-            <Label style={{ width: 'auto', marginLeft: '10px', marginRight: '5px' }}>Active High:</Label>
-            <input 
-              type="checkbox" 
-              checked={resetConfig.active_high}
-              onChange={e => setResetConfig({...resetConfig, active_high: e.target.checked})}
-            />
-          </InputRow>
+          </StepBox>
 
-          <SectionTitle>輸入腳位測資綁定 (Stimulus Bindings)</SectionTitle>
-          {bindings.length === 0 ? (
-            <div style={{ color: '#888', fontStyle: 'italic' }}>未偵測到需要綁定測資的輸入腳位。</div>
-          ) : (
-            bindings.map((binding, index) => (
-              <InputRow key={binding.input_name}>
-                <Label>{binding.input_name} [{binding.width}-bit]</Label>
-                <StyledInput 
-                  placeholder="輸入檔名 (如 tb1.map)" 
-                  value={binding.data_file}
-                  onChange={e => handleBindingChange(index, 'data_file', e.target.value)}
+          <SectionTitle>Step 2: Upload .v File (File Import)</SectionTitle>
+          <StepBox>
+            <InputRow>
+              <Label>Verilog (.v)</Label>
+              <StyledInput
+                value={hardwareContext?.verilog_path || ''}
+                readOnly
+                placeholder="Upload Verilog source"
+              />
+              <SmallButton onClick={importVerilog} disabled={!!isImportingVerilog}>
+                {isImportingVerilog ? 'Importing...' : 'Upload'}
+              </SmallButton>
+            </InputRow>
+            <Helper>After upload, the system automatically detects top-module I/O and enables module expansion.</Helper>
+          </StepBox>
+
+          <SectionTitle>Step 3: Auto-Detected Main Module I/O</SectionTitle>
+          <StepBox>
+            {ports.inputs.length === 0 && ports.outputs.length === 0 && (
+              <Helper>No detected ports. Import a Verilog file first.</Helper>
+            )}
+
+            {ports.inputs.length > 0 && <div style={{ marginBottom: '10px', fontWeight: 'bold' }}>Inputs</div>}
+            {ports.inputs.map((i) => (
+              <InputRow key={`in-${i.name}`}>
+                <Label>
+                  <Checkbox
+                    type="checkbox"
+                    checked={!!selectedInputs[i.name]}
+                    onChange={() => toggleSelection('input', i.name)}
+                  />
+                  {i.name} [{i.width}-bit]
+                </Label>
+              </InputRow>
+            ))}
+
+            {ports.outputs.length > 0 && <div style={{ marginBottom: '10px', marginTop: '12px', fontWeight: 'bold' }}>Outputs</div>}
+            {ports.outputs.map((o) => (
+              <InputRow key={`out-${o.name}`}>
+                <Label>
+                  <Checkbox
+                    type="checkbox"
+                    checked={!!selectedOutputs[o.name]}
+                    onChange={() => toggleSelection('output', o.name)}
+                  />
+                  {o.name} [{o.width}-bit]
+                </Label>
+              </InputRow>
+            ))}
+          </StepBox>
+
+          <SectionTitle>Step 4: Independent .dat Upload Per Selected I/O</SectionTitle>
+          <StepBox>
+            {ports.inputs.filter(i => selectedInputs[i.name]).map((i) => (
+              <InputRow key={`bind-in-${i.name}`}>
+                <Label>{i.name}</Label>
+                <StyledInput
+                  value={inputBindings[i.name]?.data_file || ''}
+                  readOnly
+                  placeholder="Upload this input's .dat file"
                 />
-                <StyledSelect 
-                  value={binding.radix}
-                  onChange={e => handleBindingChange(index, 'radix', e.target.value)}
+                <SmallButton onClick={() => selectIndependentDataFile('input', i.name)}>Upload</SmallButton>
+                <StyledSelect
+                  value={inputBindings[i.name]?.radix || (i.width > 1 ? 'hex' : 'bin')}
+                  onChange={(e) => updateBinding('input', i.name, 'radix', e.target.value)}
                 >
-                  <option value="bin">二進位 (bin)</option>
-                  <option value="hex">十六進位 (hex)</option>
-                  <option value="dec">十進位 (dec)</option>
+                  <option value="bin">bin</option>
+                  <option value="hex">hex</option>
+                  <option value="dec">dec</option>
                 </StyledSelect>
               </InputRow>
-            ))
-          )}
+            ))}
 
-          <SectionTitle>模擬設定 (Simulation Control)</SectionTitle>
-          <InputRow>
-            <Label>總模擬週期數</Label>
-            <StyledInput 
-              type="number" 
-              value={simCycles} 
-              onChange={e => setSimCycles(e.target.value)} 
-            />
-          </InputRow>
+            {ports.outputs.filter(o => selectedOutputs[o.name]).map((o) => (
+              <InputRow key={`bind-out-${o.name}`}>
+                <Label>{o.name}</Label>
+                <StyledInput
+                  value={outputBindings[o.name]?.expected_data_file || ''}
+                  readOnly
+                  placeholder="Upload this output's expected .dat file"
+                />
+                <SmallButton onClick={() => selectIndependentDataFile('output', o.name)}>Upload</SmallButton>
+                <StyledSelect
+                  value={outputBindings[o.name]?.radix || (o.width > 1 ? 'hex' : 'bin')}
+                  onChange={(e) => updateBinding('output', o.name, 'radix', e.target.value)}
+                >
+                  <option value="bin">bin</option>
+                  <option value="hex">hex</option>
+                  <option value="dec">dec</option>
+                </StyledSelect>
+              </InputRow>
+            ))}
+          </StepBox>
+
+          <SectionTitle>Step 5: Independent Testbench Upload</SectionTitle>
+          <StepBox>
+            <InputRow>
+              <Label>Testbench</Label>
+              <StyledInput value={testbenchPath} readOnly placeholder="Select a testbench file" />
+              <SmallButton onClick={selectTestbench}>Browse</SmallButton>
+            </InputRow>
+            <Helper>User-provided testbench is required. No rigid auto-generated testbench is used in this flow.</Helper>
+          </StepBox>
+
+          {localError && <ErrorText>{localError}</ErrorText>}
         </Content>
 
         <ButtonContainer>
-          <Button onClick={onClose}>取消 (Cancel)</Button>
-          <Button primary onClick={handleSubmit}>產生 TB 並模擬 (Generate & Simulate)</Button>
+          <Button onClick={onClose}>Cancel</Button>
+          <Button primary onClick={handleSubmit}>Run Analysis</Button>
         </ButtonContainer>
       </ModalContainer>
     </ModalOverlay>

@@ -12,6 +12,7 @@ Verilog 硬體描述語言解析器 - 第一階段
 
 import os
 import sys
+import re
 from typing import Dict, List, Any, Optional, Tuple
 from pathlib import Path
 
@@ -365,6 +366,123 @@ class VerilogParser:
         """
         self.define_macros[name] = value
         print(f"已新增巨集定義：{name} = {value}")
+
+    def _fallback_extract_width(self, width_expr: Optional[str]) -> Tuple[Optional[str], Optional[str], int]:
+        """Parse simple Verilog width expression like [7:0]."""
+        if not width_expr:
+            return None, None, 1
+
+        m = re.match(r"\s*\[(.+?):(.+?)\]\s*", width_expr)
+        if not m:
+            return None, None, 1
+
+        msb = m.group(1).strip()
+        lsb = m.group(2).strip()
+        width = 1
+        try:
+            width = abs(int(msb) - int(lsb)) + 1
+        except Exception:
+            width = 1
+        return msb, lsb, width
+
+    def _fallback_parse_without_preprocessor(self, filepath: str) -> Dict[str, Any]:
+        """
+        Fallback parser used when external preprocessor is unavailable.
+        Extracts module I/O/wire/reg/submodule structure with regex so hierarchy expansion can still work.
+        """
+        with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
+            content = f.read()
+
+        # Strip comments for more stable regex matching.
+        content = re.sub(r"//.*", "", content)
+        content = re.sub(r"/\*.*?\*/", "", content, flags=re.S)
+
+        nodes: List[Dict[str, Any]] = []
+        edges: List[Dict[str, Any]] = []
+
+        module_pattern = re.compile(r"module\s+(\w+)\b(.*?)(?=endmodule)", re.S)
+        decl_pattern = re.compile(r"\b(input|output|wire|reg)\b\s*(\[[^\]]+\])?\s*([^;]+);", re.I)
+        inst_pattern = re.compile(r"\b(\w+)\s+(\w+)\s*\((.*?)\)\s*;", re.S)
+        port_map_pattern = re.compile(r"\.\s*\w+\s*\(\s*([A-Za-z_][A-Za-z0-9_]*)\s*\)")
+
+        modules_found: List[str] = []
+
+        for mm in module_pattern.finditer(content):
+            module_name = mm.group(1)
+            module_body = mm.group(2)
+            modules_found.append(module_name)
+
+            declared_ids = set()
+
+            for dm in decl_pattern.finditer(module_body):
+                sig_type = dm.group(1).lower()
+                width_expr = dm.group(2)
+                signal_list = dm.group(3)
+
+                msb, lsb, width = self._fallback_extract_width(width_expr)
+
+                parts = [p.strip() for p in signal_list.split(',') if p.strip()]
+                for part in parts:
+                    name = re.sub(r"\s*=.*$", "", part).strip()
+                    if not re.match(r"^[A-Za-z_][A-Za-z0-9_]*$", name):
+                        continue
+                    if name in declared_ids:
+                        continue
+                    declared_ids.add(name)
+
+                    nodes.append({
+                        "id": name,
+                        "type": sig_type,
+                        "module": module_name,
+                        "width": width,
+                        "msb": msb,
+                        "lsb": lsb
+                    })
+
+            for im in inst_pattern.finditer(module_body):
+                target_module = im.group(1)
+                instance_name = im.group(2)
+                port_blob = im.group(3)
+
+                if target_module in ["if", "for", "while", "case", "always", "assign"]:
+                    continue
+
+                nodes.append({
+                    "id": instance_name,
+                    "type": "submodule",
+                    "label": f"{instance_name} ({target_module})",
+                    "module": module_name,
+                    "target_module": target_module
+                })
+
+                for pm in port_map_pattern.finditer(port_blob):
+                    sig = pm.group(1)
+                    edges.append({
+                        "from": sig,
+                        "to": instance_name,
+                        "assign_type": "port_map",
+                        "logic_type": "structural",
+                        "module": module_name
+                    })
+
+        if not modules_found:
+            return {
+                "file": filepath,
+                "nodes": [{
+                    "id": "ERROR_FALLBACK_NO_MODULE",
+                    "type": "error",
+                    "width": 1,
+                    "module": "parse_error",
+                    "error_message": "Fallback parser found no module definitions"
+                }],
+                "edges": []
+            }
+
+        return {
+            "file": filepath,
+            "nodes": nodes,
+            "edges": edges
+        }
     
     def parse_file(self, filepath: str) -> Dict[str, Any]:
         """
@@ -460,12 +578,19 @@ class VerilogParser:
             builtins.open = utf8_open
             
             try:
-                # 使用 PyVerilog 解析檔案
-                ast, directives = parse(
-                    parse_args,
-                    preprocess_include=self.include_paths,
-                    preprocess_define=self.define_macros
-                )
+                try:
+                    # 使用 PyVerilog 解析檔案
+                    ast, directives = parse(
+                        parse_args,
+                        preprocess_include=self.include_paths,
+                        preprocess_define=self.define_macros
+                    )
+                except Exception as parse_err:
+                    err_text = str(parse_err)
+                    if "WinError 2" in err_text or "No such file or directory" in err_text:
+                        print("警告：外部預處理器不可用，改用 fallback parser")
+                        return self._fallback_parse_without_preprocessor(filepath)
+                    raise
             finally:
                 # 恢復原始 open 函數
                 builtins.open = original_open

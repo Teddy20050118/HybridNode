@@ -255,7 +255,8 @@
         "type": "wire",
         "width": 1,
         "module": "ATE",
-        "target_module": null
+        "target_module": null,
+        "risk": "unused"
       },
       "type": "customNode"
     },
@@ -305,6 +306,7 @@
         "width": 7,
         "module": "ATE",
         "target_module": null,
+        "risk": "unused",
         "msb": "6",
         "lsb": "0"
       },
@@ -323,6 +325,7 @@
         "width": 7,
         "module": "ATE",
         "target_module": null,
+        "risk": "unused",
         "msb": "6",
         "lsb": "0"
       },
@@ -359,6 +362,7 @@
         "width": 8,
         "module": "ATE",
         "target_module": null,
+        "risk": "unused",
         "msb": "7",
         "lsb": "0"
       },
@@ -377,6 +381,7 @@
         "width": 8,
         "module": "ATE",
         "target_module": null,
+        "risk": "unused",
         "msb": "7",
         "lsb": "0"
       },
@@ -395,6 +400,7 @@
         "width": 8,
         "module": "ATE",
         "target_module": null,
+        "risk": "unused",
         "msb": "7",
         "lsb": "0"
       },
@@ -413,6 +419,7 @@
         "width": 8,
         "module": "ATE",
         "target_module": null,
+        "risk": "unused",
         "msb": "7",
         "lsb": "0"
       },
@@ -431,6 +438,7 @@
         "width": 8,
         "module": "ATE",
         "target_module": null,
+        "risk": "unused",
         "msb": "7",
         "lsb": "0"
       },
@@ -817,7 +825,8 @@
         "type": "wire",
         "width": 1,
         "module": "THRES_GEN",
-        "target_module": null
+        "target_module": null,
+        "risk": "unused"
       },
       "type": "customNode"
     },
@@ -1047,7 +1056,8 @@
         "type": "output",
         "width": 1,
         "module": "FA",
-        "target_module": null
+        "target_module": null,
+        "risk": "unused"
       },
       "type": "customNode"
     },
@@ -1063,7 +1073,8 @@
         "type": "output",
         "width": 1,
         "module": "FA",
-        "target_module": null
+        "target_module": null,
+        "risk": "unused"
       },
       "type": "customNode"
     },
@@ -1079,7 +1090,8 @@
         "type": "wire",
         "width": 1,
         "module": "FA",
-        "target_module": null
+        "target_module": null,
+        "risk": "unused"
       },
       "type": "customNode"
     },
@@ -1095,7 +1107,8 @@
         "type": "wire",
         "width": 1,
         "module": "FA",
-        "target_module": null
+        "target_module": null,
+        "risk": "unused"
       },
       "type": "customNode"
     },
@@ -1111,7 +1124,8 @@
         "type": "wire",
         "width": 1,
         "module": "FA",
-        "target_module": null
+        "target_module": null,
+        "risk": "unused"
       },
       "type": "customNode"
     },
@@ -1207,7 +1221,8 @@
         "type": "output",
         "width": 1,
         "module": "HA",
-        "target_module": null
+        "target_module": null,
+        "risk": "unused"
       },
       "type": "customNode"
     },
@@ -2013,10 +2028,10 @@
     "assignment_error": 0,
     "missing_reset": 2,
     "comb_loop": 0,
-    "unused": 18
+    "unused": 33
   },
   "metadata": {
-    "source_file": "examples\\sample.v",
+    "source_file": "C:\\Users\\eric7\\OneDrive\\Desktop\\ATE.v",
     "total_nodes": 76,
     "total_edges": 50,
     "layout_algorithm": "spring",

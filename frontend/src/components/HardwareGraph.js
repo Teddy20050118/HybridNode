@@ -14,6 +14,8 @@ import HardwareNode from './HardwareNode';
 import CustomHardwareEdge from './CustomHardwareEdge';
 // 引入測資設定 Modal
 import StimulusConfigModal from './StimulusConfigModal';
+// 引入 AI 風險分析面板
+import RiskAnalysisPanel from './RiskAnalysisPanel';
 // 引入 Bridge Hook 用於前後端通訊
 import { useBridge } from '../hooks/useBridge';
 
@@ -26,7 +28,7 @@ import simulationData from '../data/simulation_data.json';
 
 // ==================== 樣式組件 ====================
 
-const StimulusButton = styled.button`
+const FileImportButton = styled.button`
   position: absolute;
   top: 20px;
   left: 20px;
@@ -54,34 +56,6 @@ const StimulusButton = styled.button`
   }
 `;
 
-const LoadVerilogButton = styled.button`
-  position: absolute;
-  top: 20px;
-  left: 220px;
-  z-index: 1000;
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 14px;
-  box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
-  transition: all 0.3s;
-  font-family: 'Consolas', monospace;
-  
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(245, 87, 108, 0.6);
-  }
-  
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-`;
-
 const LoadingOverlay = styled.div`
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -91,6 +65,29 @@ const LoadingOverlay = styled.div`
   justify-content: center;
   align-items: center;
   z-index: 9999;
+`;
+
+const AIRiskButton = styled.button`
+  position: absolute;
+  top: 20px;
+  left: 220px;
+  z-index: 1000;
+  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  color: #111;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  box-shadow: 0 4px 15px rgba(67, 233, 123, 0.4);
+  transition: all 0.3s;
+  font-family: 'Consolas', monospace;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(67, 233, 123, 0.6);
+  }
 `;
 
 const LoadingSpinner = styled.div`
@@ -206,9 +203,14 @@ const HardwareGraph = () => {
   // 測資設定 Modal 狀態
   const [isStimulusModalOpen, setIsStimulusModalOpen] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [hardwareContext, setHardwareContext] = useState({});
   
   // 載入 Verilog 流水線狀態
   const [isPipelineRunning, setIsPipelineRunning] = useState(false);
+
+  // AI 風險分析面板
+  const [isRiskPanelOpen, setIsRiskPanelOpen] = useState(false);
+  const [highlightedPathNodeIds, setHighlightedPathNodeIds] = useState(new Set());
 
   // ==================== Group Nodes 核心狀態 ====================
   
@@ -610,6 +612,85 @@ const HardwareGraph = () => {
 
   }, [expandedGroups, expandModule]);
 
+  // ==================== AI 風險分析面板 ====================
+
+  const handleOpenRiskPanel = useCallback(() => {
+    setIsRiskPanelOpen(true);
+  }, []);
+
+  const handleCloseRiskPanel = useCallback(() => {
+    setIsRiskPanelOpen(false);
+    setHighlightedPathNodeIds(new Set());
+    // 清除高亮樣式
+    setNodes(prev => prev.map(n => ({
+      ...n,
+      style: n.type === 'groupNode' ? n.style : { ...n.style, opacity: 1 }
+    })));
+    setEdges(prev => prev.map(e => ({
+      ...e,
+      style: { ...e.style, opacity: 1 }
+    })));
+  }, [setNodes, setEdges]);
+
+  const handleSelectRiskPath = useCallback((nodeIds, pathItem) => {
+    const pathSet = new Set(nodeIds || []);
+    setHighlightedPathNodeIds(pathSet);
+
+    // 高亮路徑上的節點，其餘節點降低不透明度
+    setNodes(prev => prev.map(n => {
+      if (n.type === 'groupNode') return n;
+
+      const nid = n.id;
+      const isOnPath = pathSet.has(nid);
+
+      if (isOnPath) {
+        return {
+          ...n,
+          style: {
+            ...n.style,
+            opacity: 1,
+            filter: 'drop-shadow(0 0 10px #ff0) drop-shadow(0 0 20px #f80)'
+          }
+        };
+      }
+      return {
+        ...n,
+        style: {
+          ...n.style,
+          opacity: 0.2,
+          filter: 'none'
+        }
+      };
+    }));
+
+    // 高亮路徑上的連線
+    setEdges(prev => prev.map(e => {
+      const srcOnPath = pathSet.has(e.source);
+      const tgtOnPath = pathSet.has(e.target);
+
+      if (srcOnPath && tgtOnPath) {
+        return {
+          ...e,
+          style: {
+            ...e.style,
+            opacity: 1,
+            stroke: '#FFD700',
+            strokeWidth: 4,
+            filter: 'drop-shadow(0 0 6px #FFD700)'
+          },
+          animated: true
+        };
+      }
+      return {
+        ...e,
+        style: {
+          ...e.style,
+          opacity: 0.1
+        }
+      };
+    }));
+  }, [setNodes, setEdges]);
+
   // ==================== 測資設定相關 ====================
   
   const handleOpenStimulusModal = useCallback(() => {
@@ -620,140 +701,145 @@ const HardwareGraph = () => {
     setIsStimulusModalOpen(false);
   }, []);
 
-  const handleGenerateStimulus = useCallback(async (stimulusConfig) => {
+  const handleGenerateStimulus = useCallback(async (validationRequest) => {
     setIsGenerating(true);
     try {
-      console.log('[測資生成] 設定:', stimulusConfig);
+      console.log('[Hardware Validation] request:', validationRequest);
       
-      if (bridge?.generate_auto_tb) {
-        const configJson = JSON.stringify(stimulusConfig, null, 2);
+      if (bridge?.run_hardware_validation) {
+        const configJson = JSON.stringify(validationRequest, null, 2);
         
-        bridge.generate_auto_tb(configJson, (result) => {
-          console.log('[測資生成] 後端回應:', result);
+        bridge.run_hardware_validation(configJson, (result) => {
+          console.log('[Hardware Validation] backend response:', result);
           try {
             const response = JSON.parse(result);
             if (response.success) {
-              console.log('[測資生成] 成功:', response.message);
-              alert(`測資生成成功！\n${response.message}\n\n請重新載入頁面查看最新模擬結果。`);
-              setTimeout(() => window.location.reload(), 2000);
+              const diag = response.diagnostics || {};
+              const correctness = diag.correct;
+              const statusText = correctness === true
+                ? 'Simulation output matches expected data.'
+                : correctness === false
+                  ? 'Simulation output mismatch detected.'
+                  : 'Simulation completed. No expected output mapping was provided for strict correctness check.';
+
+              const mismatchCount = diag.total_mismatches || 0;
+              const checked = diag.total_samples_checked || 0;
+              alert(
+                `Analysis complete.\n` +
+                `${statusText}\n` +
+                `Checked samples: ${checked}\n` +
+                `Mismatches: ${mismatchCount}\n` +
+                `Result file: ${response.simulation_path || 'output/simulation_data.json'}`
+              );
             } else {
-              console.error('[測資生成] 失敗:', response.error);
-              alert(`測資生成失敗：\n${response.error}`);
+              console.error('[Hardware Validation] failed:', response.error);
+              alert(`Validation failed:\n${response.error}`);
             }
           } catch (err) {
-            console.error('[測資生成] 解析回應失敗:', err);
-            alert('後端回應格式錯誤，請檢查 Console 輸出');
+            console.error('[Hardware Validation] parse failed:', err);
+            alert('Backend response format error. Check console logs.');
           } finally {
             setIsGenerating(false);
           }
         });
       } else {
-        console.warn('[測資生成] Bridge 未就緒');
+        console.warn('[Hardware Validation] bridge not ready');
         setIsGenerating(false);
-        alert('後端通訊未就緒，請確認 Bridge 連接狀態');
+        alert('Backend bridge is not ready.');
       }
       
       setIsStimulusModalOpen(false);
     } catch (error) {
-      console.error('[測資生成] 錯誤:', error);
-      alert(`執行錯誤：\n${error.message}`);
+      console.error('[Hardware Validation] error:', error);
+      alert(`Execution error:\n${error.message}`);
       setIsGenerating(false);
     }
   }, [bridge]);
 
   // ==================== 載入 Verilog 專案（一鍵執行流水線） ====================
   
-  const handleLoadVerilogProject = useCallback(async () => {
+  const handleImportVerilogProject = useCallback(async () => {
     if (!bridge) {
       alert('Bridge 未就緒，請稍後再試');
-      return;
+      return false;
     }
-    
+
     setIsPipelineRunning(true);
-    
+
     try {
       console.log('[Verilog Pipeline] 開啟檔案選擇對話框');
-      
-      // 步驟 1：開啟檔案選擇對話框
-      bridge.open_verilog_file_dialog((dialogResult) => {
-        try {
-          const dialogResponse = JSON.parse(dialogResult);
-          
-          if (dialogResponse.cancelled) {
-            console.log('[Verilog Pipeline] 使用者取消選擇');
-            setIsPipelineRunning(false);
-            return;
-          }
-          
-          if (!dialogResponse.success || !dialogResponse.file_path) {
-            console.error('[Verilog Pipeline] 檔案選擇失敗:', dialogResponse.error);
-            alert(`檔案選擇失敗：${dialogResponse.error || '未知錯誤'}`);
-            setIsPipelineRunning(false);
-            return;
-          }
-          
-          const verilogPath = dialogResponse.file_path;
-          console.log('[Verilog Pipeline] 選擇的檔案:', verilogPath);
-          
-          // 步驟 2：執行硬體分析流水線
-          console.log('[Verilog Pipeline] 開始執行流水線...');
-          
-          bridge.run_hardware_pipeline(verilogPath, (pipelineResult) => {
-            try {
-              const pipelineResponse = JSON.parse(pipelineResult);
-              
-              if (pipelineResponse.success) {
-                console.log('[Verilog Pipeline] 流水線執行成功');
-                console.log('[Verilog Pipeline] 回應資料:', pipelineResponse);
-                
-                // 步驟 3：更新前端資料
-                if (pipelineResponse.data) {
-                  const newNodes = pipelineResponse.data.reactflow_nodes || [];
-                  const newEdges = pipelineResponse.data.reactflow_edges || [];
-                  
-                  console.log(`[Verilog Pipeline] 更新資料 - 節點: ${newNodes.length}, 連線: ${newEdges.length}`);
-                  
-                  // 更新 rawNodes 和 rawEdges
-                  setRawNodes(newNodes);
-                  setRawEdges(newEdges);
-                  
-                  // 重置展開狀態
-                  setExpandedGroups({});
-                  
-                  // 通知成功
-                  alert(`Verilog 專案載入成功！\n\n已解析 ${newNodes.length} 個節點\n畫面即將重新初始化`);
-                  
-                  // 稍微延遲後重新初始化（讓 useEffect 觸發）
-                  setTimeout(() => {
-                    setIsPipelineRunning(false);
-                  }, 500);
-                } else {
-                  console.warn('[Verilog Pipeline] 回應中缺少資料');
-                  alert(`流水線執行成功，但回應資料格式異常\n請檢查 Console 輸出`);
-                  setIsPipelineRunning(false);
-                }
-              } else {
-                console.error('[Verilog Pipeline] 流水線執行失敗:', pipelineResponse.error);
-                alert(`流水線執行失敗：\n${pipelineResponse.error || '未知錯誤'}`);
-                setIsPipelineRunning(false);
-              }
-            } catch (err) {
-              console.error('[Verilog Pipeline] 解析流水線回應失敗:', err);
-              alert(`解析流水線回應失敗：\n${err.message}`);
-              setIsPipelineRunning(false);
+
+      const success = await new Promise((resolve) => {
+        bridge.open_verilog_file_dialog((dialogResult) => {
+          try {
+            const dialogResponse = JSON.parse(dialogResult);
+
+            if (dialogResponse.cancelled) {
+              console.log('[Verilog Pipeline] 使用者取消選擇');
+              resolve(false);
+              return;
             }
-          });
-          
-        } catch (err) {
-          console.error('[Verilog Pipeline] 解析對話框回應失敗:', err);
-          alert(`解析對話框回應失敗：\n${err.message}`);
-          setIsPipelineRunning(false);
-        }
+
+            if (!dialogResponse.success || !dialogResponse.file_path) {
+              console.error('[Verilog Pipeline] 檔案選擇失敗:', dialogResponse.error);
+              alert(`檔案選擇失敗：${dialogResponse.error || '未知錯誤'}`);
+              resolve(false);
+              return;
+            }
+
+            const verilogPath = dialogResponse.file_path;
+            console.log('[Verilog Pipeline] 選擇的檔案:', verilogPath);
+            console.log('[Verilog Pipeline] 開始執行流水線...');
+
+            bridge.run_hardware_pipeline(verilogPath, (pipelineResult) => {
+              try {
+                const pipelineResponse = JSON.parse(pipelineResult);
+
+                if (!pipelineResponse.success) {
+                  console.error('[Verilog Pipeline] 流水線執行失敗:', pipelineResponse.error);
+                  alert(`流水線執行失敗：\n${pipelineResponse.error || '未知錯誤'}`);
+                  resolve(false);
+                  return;
+                }
+
+                if (!pipelineResponse.data) {
+                  console.warn('[Verilog Pipeline] 回應中缺少資料');
+                  alert('流水線執行成功，但回應資料格式異常');
+                  resolve(false);
+                  return;
+                }
+
+                const newNodes = pipelineResponse.data.reactflow_nodes || [];
+                const newEdges = pipelineResponse.data.reactflow_edges || [];
+                const context = pipelineResponse.hardware_context || {};
+
+                setRawNodes(newNodes);
+                setRawEdges(newEdges);
+                setHardwareContext(context);
+                setExpandedGroups({});
+
+                alert(`Verilog 專案載入成功！\n\n已解析 ${newNodes.length} 個節點`);
+                resolve(true);
+              } catch (err) {
+                console.error('[Verilog Pipeline] 解析流水線回應失敗:', err);
+                alert(`解析流水線回應失敗：\n${err.message}`);
+                resolve(false);
+              }
+            });
+          } catch (err) {
+            console.error('[Verilog Pipeline] 解析對話框回應失敗:', err);
+            alert(`解析對話框回應失敗：\n${err.message}`);
+            resolve(false);
+          }
+        });
       });
-      
+
+      return success;
     } catch (error) {
       console.error('[Verilog Pipeline] 執行錯誤:', error);
       alert(`執行錯誤：\n${error.message}`);
+      return false;
+    } finally {
       setIsPipelineRunning(false);
     }
   }, [bridge, setRawNodes, setRawEdges]);
@@ -810,6 +896,13 @@ const HardwareGraph = () => {
       
       const signalName = node.data?.originalId || node.data?.label;
       const instancePath = node.data?.instancePath;  // 如 "F1", "th0"
+
+      // clk 與 reset 訊號不顯示二進位值
+      const nameLower = (signalName || '').toLowerCase();
+      const isClkOrReset = nameLower === 'clk' || nameLower === 'clock'
+        || nameLower.includes('rst') || nameLower.includes('reset');
+      if (isClkOrReset) return node;
+
       const signalValue = lookupSignalValue(signalName, instancePath);
 
       if (signalValue !== null) {
@@ -828,21 +921,35 @@ const HardwareGraph = () => {
     setEdges(prevEdges => prevEdges.map(edge => {
       const sourceSignalName = edge.data?.originalSource || edge.source;
       const instancePath = edge.data?.instancePath;
+
+      // 判斷訊號類型
+      let signalType = 'data';
+      const srcLower = (sourceSignalName || '').toLowerCase();
+      if (srcLower === 'clk' || srcLower === 'clock') {
+        signalType = 'clock';
+      } else if (srcLower.includes('rst') || srcLower.includes('reset')) {
+        signalType = 'reset';
+      }
+
+      // clk 與 reset 連線保留顏色標記但不顯示二進位值
+      if (signalType === 'clock' || signalType === 'reset') {
+        return {
+          ...edge,
+          type: 'custom',
+          data: {
+            ...edge.data,
+            signalType: signalType
+            // 不設定 currentValue，不顯示二進位值
+          }
+        };
+      }
+
       const signalValue = lookupSignalValue(sourceSignalName, instancePath);
 
       if (signalValue !== null) {
-        // 判斷訊號類型以決定連線著色
-        let signalType = 'data';
-        const srcLower = sourceSignalName.toLowerCase();
-        if (srcLower === 'clk' || srcLower === 'clock') {
-          signalType = 'clock';
-        } else if (srcLower.includes('rst') || srcLower.includes('reset')) {
-          signalType = 'reset';
-        }
-
         return {
           ...edge,
-          type: 'custom',  // 使用自定義連線渲染器
+          type: 'custom',
           data: {
             ...edge.data,
             currentValue: signalValue,
@@ -908,13 +1015,13 @@ const HardwareGraph = () => {
         </LoadingOverlay>
       )}
 
-      <StimulusButton onClick={handleOpenStimulusModal} disabled={!bridge || isGenerating || isPipelineRunning}>
-        {isGenerating ? '生成中...' : '測資與時脈設定'}
-      </StimulusButton>
-      
-      <LoadVerilogButton onClick={handleLoadVerilogProject} disabled={!bridge || isGenerating || isPipelineRunning}>
-        {isPipelineRunning ? '載入中...' : '載入 Verilog 專案'}
-      </LoadVerilogButton>
+      <FileImportButton onClick={handleOpenStimulusModal} disabled={!bridge || isGenerating || isPipelineRunning}>
+        {isGenerating ? 'Processing...' : 'File Import'}
+      </FileImportButton>
+
+      <AIRiskButton onClick={handleOpenRiskPanel}>
+        🤖 AI 風險分析
+      </AIRiskButton>
 
       <InfoPanel>
         <div style={{ marginBottom: '8px', color: '#667eea', fontWeight: '700' }}>
@@ -954,8 +1061,19 @@ const HardwareGraph = () => {
         <StimulusConfigModal
           isOpen={isStimulusModalOpen}
           onClose={handleCloseStimulusModal}
-          hierarchyData={graphData}
-          onGenerate={handleGenerateStimulus}
+          hardwareContext={hardwareContext}
+          bridge={bridge}
+          onAnalyze={handleGenerateStimulus}
+          onImportVerilog={handleImportVerilogProject}
+          isImportingVerilog={isPipelineRunning}
+        />
+      )}
+
+      {isRiskPanelOpen && (
+        <RiskAnalysisPanel
+          bridge={bridge}
+          onSelectPath={handleSelectRiskPath}
+          onClose={handleCloseRiskPanel}
         />
       )}
 
